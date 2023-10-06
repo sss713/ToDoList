@@ -1,5 +1,6 @@
 import express from 'express';
 import config from 'config';
+import authRouter from "/routes/authRouter.js"
 
 const PORT = config.get('Index.ServerPort');
 const DB_URL = config.get('Index.DB_URL');
