@@ -2,8 +2,9 @@ import express from 'express';
 import config from 'config';
 import userRouter from "./routes/userRouter.js"
 
+
 const PORT = config.get('Index.ServerPort');
-const DB_URL = config.get('Index.DB_URL');
+// const DB_URL = config.get('Index.DB_URL');
 
 const app = express();
 

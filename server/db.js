@@ -1,14 +1,11 @@
-import Pool from 'pg';
+import pg from 'pg';
+import config from 'config';
 
-const pool = new Pool({
-    user: "postgres",
-    password: "ToDoList",
-    host: "localhost",
-    port: 5432,
-    database: "ToDoList"
-})
+const { Pool } = pg;
 
-module.exports = pool;
+const pool = new Pool(config.get('db'))
+
+export default pool;
 
 
 
