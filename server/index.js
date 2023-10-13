@@ -1,15 +1,14 @@
 import express from 'express';
 import config from 'config';
-import userRouter from "./routes/userRouter.js"
+import authRouter from "./routes/authRouter.js"
 
 
 const PORT = config.get('Index.ServerPort');
-// const DB_URL = config.get('Index.DB_URL');
 
 const app = express();
 
 app.use(express.json())
-app.use('/api', userRouter);
+app.use('/api', authRouter);
 
 const start = () => {
     try {

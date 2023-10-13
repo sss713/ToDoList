@@ -1,41 +1,75 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
-import {check, validationResult} from "express-validator";
-import User from "/db.js"; //temp 
-import { has } from "config";
+import jwt from "jsonwebtoken"
+import config from "config"
+import db from "../db.js";
 
 const router = new Router();
 
 router.post('/registration',
-[
-    check('email', "Uncorrect email").isEmail(),
-    check('password', "password must be longer than 8 and shorter than 36").isLength({min:8,max:36})
-],
-
 async (req, res) => {
     try {
-        const errors = validationResult(req)
 
-        if(!errors.isEmpty()) {
-            return res.status(400).json({message: "Uncorrect request", errors})
-        }
+        const {login, password} = req.body
 
-        const {email, password} = req.body
+        if (login.length > 3 && login.length < 20){
 
-        const candidate = User.findOne({email})
+            if (password.length > 8 && password.length < 36){
 
-        if (candidate) {
-            return res.status(400).json({message: `User with email: ${email} already exist`})
+                const candidate = await db.query('SELECT login FROM users where login = $1', [login])
+                if (candidate.rows[0] && candidate.rows[0].login === login) {
+                    return res.status(400).json({message: `User with login: ${login} already exist`})
+                } else {
+                    const hashPassword = await bcrypt.hash(password, 7)
+                    const user = await db.query('INSERT INTO users (login, password) values ($1, $2) RETURNING *', [login, hashPassword])
+                    return res.json(user.rows);
+                }
+
+            } else {
+                return res.status(400).json({message: "password must be longer than 8 and shorter than 36"})
+            }
         } else {
-            const hashPassword = await bcrypt.hash(password, 7)
-            const user = new User({email})
-            await user.save()
-
+            return res.status(400).json({message: "login must be longer than 3 and shorter than 20"})
         }
+       
     } catch (e) {
         console.log(e);
-        res.send({message:"Server error"})
+        return res.send({message:"Server error"})
     }
 })
 
-module.exports = router;
+router.post('/authorization',
+
+async (req, res) => {
+
+    try {
+        const {login, password} = req.body
+        const candidate = await db.query('SELECT id, login, password FROM users where login = $1', [login])
+        if (candidate.rows.length === 0 || candidate.rows[0].login !== login) {
+            return res.status(400).json({message: "Invalid password or username"})
+        } else {
+            const isPassValid = bcrypt.compareSync(password, candidate.rows[0].password)
+
+            if (!isPassValid) {
+                return res.status(400).json({message: "Invalid password or username"})
+            } else {
+                const token = jwt.sign({id: candidate.rows[0].id}, config.get("authRouter.secretKey"), {expiresIn: "1h"})
+                return res.json({
+                    token,
+                    user: {
+                        id: candidate.rows[0].id,
+                        login: candidate.rows[0].login
+                    }
+                })
+            }
+        }
+
+    } catch (e) {
+        console.log(e);
+        return res.send({message:"Server error"})
+    }
+    
+
+})
+
+export default router;

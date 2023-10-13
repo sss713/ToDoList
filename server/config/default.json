@@ -8,6 +8,9 @@
         "host": "localhost",
         "port": 5432,
         "database": "ToDoList"
+    },
+    "authRouter":{
+        "secretKey": "ToDoList-Is-The-Best!"
     }
     
 }
