@@ -13,7 +13,6 @@
     "bcryptjs": "^2.4.3",
     "config": "^3.3.9",
     "express": "^4.18.2",
-    "express-validator": "^7.0.1",
     "npm": "^10.1.0",
     "pg": "^8.11.3"
   },
