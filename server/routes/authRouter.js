@@ -54,7 +54,7 @@ async (req, res) => {
                 return res.status(400).json({message: "Invalid password or username"})
             } else {
                 const token = jwt.sign({id: candidate.rows[0].id}, config.get("authRouter.secretKey"), {expiresIn: "1h"})
-                return res.json({
+                return res.status(200).json({message: `Hi ${login}! Your successful login!`,
                     token,
                     user: {
                         id: candidate.rows[0].id,

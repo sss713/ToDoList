@@ -13,3 +13,17 @@ export const registration = async (login, password) => {
     }
 
 }
+
+export const authorization = async (login, password) => {
+    try {
+        const response = await axios.post('http://localhost:5000/api/authorization', {
+            login,
+            password
+        })
+        console.log(response.data.message)
+        alert(response.data.message)
+    } catch (e) {
+        alert(e.response.data.message)
+    }
+
+}
