@@ -22,7 +22,7 @@ async (req, res) => {
                 } else {
                     const hashPassword = await bcrypt.hash(password, 7)
                     const user = await db.query('INSERT INTO users (login, password) values ($1, $2) RETURNING *', [login, hashPassword])
-                    return res.json(user.rows);
+                    return res.status(200).json({message: `Hi ${login}! Registration successful!`});
                 }
 
             } else {
