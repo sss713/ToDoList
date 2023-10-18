@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken"
 import config from "config"
 import db from "../db.js";
+import { authMiddleware } from "../middleware/auth.middleware.js";
 
 const router = new Router();
 
@@ -54,7 +55,7 @@ async (req, res) => {
                 return res.status(400).json({message: "Invalid password or username"})
             } else {
                 const token = jwt.sign({id: candidate.rows[0].id}, config.get("authRouter.secretKey"), {expiresIn: "1h"})
-                return res.status(200).json({message: `Hi ${login}! Your successful login!`,
+                return res.json({
                     token,
                     user: {
                         id: candidate.rows[0].id,
@@ -64,6 +65,28 @@ async (req, res) => {
             }
         }
 
+    } catch (e) {
+        console.log(e);
+        return res.send({message:"Server error"})
+    }
+    
+
+})
+
+router.get('/auth', authMiddleware,
+
+async (req, res) => {
+
+    try {
+        const candidate = await db.query('SELECT id, login, password FROM users where login = $1', [req.body.login])
+        const token = jwt.sign({id: candidate.rows[0].id}, config.get("authRouter.secretKey"), {expiresIn: "1h"})
+                return res.json({
+                    token,
+                    user: {
+                        id: candidate.rows[0].id,
+                        login: candidate.rows[0].login
+                    }
+                })
     } catch (e) {
         console.log(e);
         return res.send({message:"Server error"})
