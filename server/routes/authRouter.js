@@ -74,12 +74,13 @@ async (req, res) => {
 })
 
 router.get('/auth', authMiddleware,
-
-async (req, res) => {
-
-    try {
-        const candidate = await db.query('SELECT id, login, password FROM users where login = $1', [req.body.login])
+    async (req, res) => {
+        try {
+        const {login} = req.body
+        const user = await db.query('SELECT id, login, password FROM users where login = $1', [login])
+        console.log(req.id)
         const token = jwt.sign({id: candidate.rows[0].id}, config.get("authRouter.secretKey"), {expiresIn: "1h"})
+        console.log(token)
                 return res.json({
                     token,
                     user: {
