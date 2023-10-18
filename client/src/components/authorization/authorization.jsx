@@ -3,7 +3,7 @@ import './authorization.css'
 import Input from "../../utils/input/input";
 import { authorization } from "../../actions/user";
 
-const authorization = () => {
+const Authorization = () => {
     const [login, setLogin] = useState("")
     const [password, setPassword] = useState("")
     
@@ -17,4 +17,4 @@ const authorization = () => {
     )
 }
 
-export default authorization;
+export default Authorization;
