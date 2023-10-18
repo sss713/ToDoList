@@ -33,7 +33,7 @@ export const authorization = (login, password) => {
 export const auth =  () => {
     return async dispatch => {
         try {
-            const response = await axios.get(`http://localhost:5000/api/auth/auth`,
+            const response = await axios.get(`http://localhost:5000/api/auth`,
                 {headers:{Authorization:`Bearer ${localStorage.getItem('token')}`}}
             )
             dispatch(setUser(response.data.user))
