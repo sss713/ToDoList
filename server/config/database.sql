@@ -1,5 +1,6 @@
 create database ToDoList;
-create table ToDoTask(TDtask_id serial Primary key,
+create table ToDoTask(
+TDtask_id serial Primary key,
 TDtask_name varchar(120),
 TDtask_description varchar(250),
 TDtask_status integer,

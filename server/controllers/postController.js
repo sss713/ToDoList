@@ -1,6 +1,6 @@
 import postService from "../modules/postService.js"
 
-class PostController {
+export class PostController {
     async create(req, res) {
         try {
             const post = await postService.create(req)
@@ -46,5 +46,3 @@ class PostController {
         }
     }
 }
-
-export default new PostController;
