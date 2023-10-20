@@ -4,17 +4,7 @@ class PostService {
     async create(post) {
         try {
             const { TDtask_name, TDtask_description, TDtask_status, TDtask_deadline, userId } = post.body
-            console.log(TDtask_name)
-            const createdPost = await db.query(`
-            WITH inserted_task AS (
-                INSERT INTO ToDoTask (TDtask_name, TDtask_description, TDtask_status, TDtask_deadline)
-                VALUES ($1, $2, $3, $4)
-                RETURNING TDtask_id
-            )
-            INSERT INTO nd (TDtask_id, user_id)
-            SELECT TDtask_id, $5 FROM inserted_task;
-            `[TDtask_name, TDtask_description, TDtask_status, TDtask_deadline, userId]);
-            console.log(createdPost.rows)
+            const createdPost = await db.query('WITH inserted_task AS ( INSERT INTO ToDoTask (TDtask_name, TDtask_description, TDtask_status, TDtask_deadline) VALUES ($1, $2, $3, $4) RETURNING *) INSERT INTO nd (TDtask_id, user_id) SELECT TDtask_id, $5 FROM inserted_task RETURNING *', [TDtask_name, TDtask_description, TDtask_status, TDtask_deadline, userId]);
             return createdPost;
         } catch (e) {
             res.status(500).json(e)
@@ -23,11 +13,8 @@ class PostService {
 
     async getAll(post) {
         try {
-            post = post.body
-            const userId = post.userId;
-            const createdPost = await db.query(`SELECT t.* FROM ToDoTask t
-            INNER JOIN nd n ON t.TDtask_id = n.TDtask_id
-            WHERE n.user_id = $1;`[userId]);
+            const { userId } = post.query
+            const createdPost = await db.query('SELECT t.* FROM ToDoTask t INNER JOIN nd n ON t.TDtask_id = n.TDtask_id WHERE n.user_id = $1;', [userId]);
             return createdPost;
         } catch (e) {
             res.status(500).json(e)
@@ -36,12 +23,8 @@ class PostService {
 
     async getOne(post) {
         try {
-            post = post.body
-            const userId = post.userId;
-            const taskId = post.TDtask_id;
-            const createdPost = await db.query(`SELECT t.* FROM ToDoTask t
-                INNER JOIN nd n ON t.TDtask_id = n.TDtask_id
-                WHERE t.TDtask_id = $1 AND n.user_id = $2;`[taskId, userId]);
+            const { taskId, userId } = post.query
+            const createdPost = await db.query('SELECT t.* FROM ToDoTask t INNER JOIN nd n ON t.TDtask_id = n.TDtask_id WHERE t.TDtask_id = $1 AND n.user_id = $2;', [taskId, userId]);
             return createdPost;
         } catch (e) {
             res.status(500).json(e)
@@ -50,14 +33,8 @@ class PostService {
 
     async update(post) {
         try {
-            post = post.body
-            const userId = post.userId;
-            const taskId = post.TDtask_id;
-            const createdPost = await db.query(`UPDATE ToDoTask
-            SET TDtask_name = $1, TDtask_description = $2, TDtask_status = $3, TDtask_deadline = $4
-            WHERE TDtask_id = $5
-              AND TDtask_id IN (SELECT TDtask_id FROM nd WHERE user_id = $6);`
-            [post.TDtask_name, psot.TDtask_description, post.TDtask_status, post.TDtask_deadline, taskId, userId]);
+            const { TDtask_name, TDtask_description, TDtask_status, TDtask_deadline, taskId, userId } = post.body
+            const createdPost = await db.query('UPDATE ToDoTask SET TDtask_name = $1, TDtask_description = $2, TDtask_status = $3, TDtask_deadline = $4 WHERE TDtask_id = $5 AND TDtask_id IN (SELECT TDtask_id FROM nd WHERE user_id = $6)RETURNING *;', [TDtask_name, TDtask_description, TDtask_status, TDtask_deadline, taskId, userId]);
             return createdPost;
         } catch (e) {
             res.status(500).json(e)
@@ -66,15 +43,9 @@ class PostService {
 
     async delete(post) {
         try {
-            post = post.body
-            const userId = post.userId;
-            const taskId = post.TDtask_id;
-            const createdPost = await db.query(`DELETE FROM nd
-            WHERE TDtask_id = $1
-              AND user_id = $2;
-            DELETE FROM ToDoTask
-            WHERE TDtask_id = $1;            
-            `[taskId, userId]);
+            const { taskId, userId } = post.query
+            const createdPost = await db.query('DELETE FROM nd WHERE TDtask_id = $1 AND user_id = $2 RETURNING *;', [taskId, userId])
+            const del2 = await db.query('DELETE FROM ToDoTask WHERE TDtask_id = $1 RETURNING *;', [taskId]);
             return createdPost;
         } catch (e) {
             res.status(500).json(e)

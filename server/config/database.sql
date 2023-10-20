@@ -9,7 +9,7 @@ create table users(user_id serial primary key,
 Login varchar(90),
 Password varchar(250),
 Nickname varchar(250));
-create table nd(ND_id int,
+create table nd(ND_id serial,
 TDtask_id int,
 user_id int,
 foreign key (TDtask_id) references ToDoTask(TDtask_id) on delete cascade,
