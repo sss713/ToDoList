@@ -4,6 +4,7 @@ import styles from "./style.module.sass";
 import Label from "../Label";
 import Text from "../Text";
 import Button from "../Button";
+import { Link } from "react-router-dom";
 
 type FormRegistrationData = {
   nickName: string;
@@ -13,9 +14,13 @@ type FormRegistrationData = {
 
 interface FormRegistrationProps {
   name?: string;
+  onClick?: () => void;
 }
 
-const FormRegistration: FC<FormRegistrationProps> = ({ name = "Form" }) => {
+const FormRegistration: FC<FormRegistrationProps> = ({
+  name = "Form",
+  onClick,
+}) => {
   const {
     register,
     formState: { errors, isValid },
@@ -27,8 +32,10 @@ const FormRegistration: FC<FormRegistrationProps> = ({ name = "Form" }) => {
     reset();
   });
   return (
-    <div className={styles.registration}>
-      <Text type="h2">{name}</Text>
+    <div className={styles.registrationForm}>
+      <Text type="h2" style={styles.name}>
+        {name}
+      </Text>
       <form onSubmit={onSubmit} className={styles.form}>
         <Label
           name="Никнейм"
@@ -98,11 +105,15 @@ const FormRegistration: FC<FormRegistrationProps> = ({ name = "Form" }) => {
             })}
           />
         </Label>
-        <Button type="submit" disabled={!isValid}>
+        <Button
+          type="submit"
+          color="_dark"
+          disabled={!isValid}
+          onClick={onClick}
+        >
           Зарегистрироваться
         </Button>
       </form>
-      <Text type="h5">Вход</Text>
     </div>
   );
 };

@@ -25,7 +25,7 @@ const Label: FC<LabelProps> = ({
         {name}
       </Text>
       {children}
-      {!errorHidden && <ErrorMessage message={errorMessage} />}
+      {errorHidden && <ErrorMessage message={errorMessage} />}
     </label>
   );
 };
