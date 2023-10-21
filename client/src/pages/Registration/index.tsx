@@ -1,34 +1,19 @@
+import FormRegistration from "shared/ui/FormRegistration";
+import Text from "shared/ui/Text";
+import styles from "./style.module.sass";
+
 function Registration() {
   return (
-    <div>
-      <div>
-        <h1>To&Do</h1>
-        <h3>начните с бесплатной учетной запис</h3>
-        <form>
-          <label>
-            Ник:
-            <input type="text" name="nickname" />
-          </label>
-          <label>
-            Email:
-            <input type="email" name="email" />
-          </label>
-          <label>
-            Пароль:
-            <input type="password" name="password" />
-          </label>
-          <label>
-            Роль:
-            <input type="text" name="role" />
-          </label>
-          <button type="submit">Зарегистрироваться</button>
-        </form>
-        <span>
-          Нажимая кнопку «Зарегистрироваться», Вы принимаете условия
-          Пользовательского соглашения.
-        </span>
-      </div>
-      <span>Войти</span>
+    <div className={styles.registration}>
+      <FormRegistration
+        name="To&Do"
+        onClick={() => {
+          window.location.assign("http://localhost:3000/todo");
+        }}
+      />
+      <Text type="text_small" style={styles.loginPage}>
+        Вход
+      </Text>
     </div>
   );
 }
