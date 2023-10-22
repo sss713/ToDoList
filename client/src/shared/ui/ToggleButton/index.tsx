@@ -1,17 +1,37 @@
 import { FC } from "react";
 import styles from "./style.module.sass";
+import Text from "../Text";
 
 interface ToggleButtonProps {
-  children?: React.ReactNode;
   style?: string;
   onClick?: () => void;
+  type?: string;
 }
 
-const ToggleButton: FC<ToggleButtonProps> = ({ children, style, onClick }) => {
+const ToggleButton: FC<ToggleButtonProps> = ({
+  style,
+  onClick,
+  type = "_regular",
+}) => {
+  function getTypeStyle(type: string) {
+    switch (type) {
+      case "completed": {
+        return styles._completed;
+      }
+      case "overdue": {
+        return styles._overdue;
+      }
+      default: {
+        return styles._regular;
+      }
+    }
+  }
   return (
-    <button className={[style, styles.toggle].join(" ")} onClick={onClick}>
-      {children}
-    </button>
+    <div className={[style, getTypeStyle(type), styles.toggle].join(" ")}>
+      <button className={styles.button} onClick={onClick}>
+        {type == "completed" ? <Text>✓</Text> : <></>}
+      </button>
+    </div>
   );
 };
 

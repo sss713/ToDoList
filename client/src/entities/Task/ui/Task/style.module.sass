@@ -1,0 +1,26 @@
+@import "../../../../shared/styles/vars"
+
+.task
+    cursor: pointer
+    transition: 0.5s
+    margin: 15px
+    padding: 15px
+    display: flex
+    flex-direction: row
+    justify-content: space-between
+    align-items: center
+    flex-wrap: wrap
+    min-height: 50px
+    background-color: var(--accent-complementary-color)
+    div
+        color: var(--main-color)
+        transition: 0.5s
+.name:hover
+    color: var(--accent-color)
+._completed
+    background-color: var(--theme-complementary-color)
+._overdue
+    background-color: var(--unactive-color)
+.description
+    margin-top: 10px
+    flex: 0 1 100%

@@ -16,7 +16,7 @@ interface TasksRowProps {
 
 const TasksRow: FC<TasksRowProps> = ({ tasks }) => {
   return (
-    <div className={styles.tasks}>
+    <div className={styles.task__container}>
       {tasks?.map((t) => (
         <Task
           id={t.id}

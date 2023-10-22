@@ -1,13 +1,34 @@
 import TasksRow from "entities/Task/ui/TaskRow";
+import styles from "./style.module.sass";
 function ToDo() {
   return (
-    <TasksRow
-      tasks={[
-        { id: 1, name: "Task1", description: "", status: "", dedline: "" },
-        { id: 2, name: "Task2", description: "", status: "", dedline: "" },
-        { id: 3, name: "Task2", description: "", status: "", dedline: "" },
-      ]}
-    ></TasksRow>
+    <div className={styles.taskRow}>
+      <TasksRow
+        tasks={[
+          {
+            id: 1,
+            name: "Task1",
+            description: "Task1Decription",
+            status: "",
+            dedline: "24.10.2023",
+          },
+          {
+            id: 2,
+            name: "Task2",
+            description: "Task2Decription",
+            status: "overdue",
+            dedline: "20.10.2023",
+          },
+          {
+            id: 3,
+            name: "Task2",
+            description: "Task3Decription",
+            status: "completed",
+            dedline: "24.10.2023",
+          },
+        ]}
+      />
+    </div>
   );
 }
 
