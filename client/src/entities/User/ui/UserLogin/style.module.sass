@@ -1,6 +1,7 @@
-@import "../../styles/vars"
+@import "../../../../shared/styles/vars"
 
-.registrationForm
+.form__container
+    position: relative
     display: flexbox
     flex-direction: column
     align-items: center
@@ -11,15 +12,32 @@
     border-radius: 30px
     padding: 50px 15px
 .form
-    display: flexbox
+    display: flex
     flex-direction: column
     align-items: center
     justify-content: center
+    width: 100%
 .input
     width: 100%
     min-height: 50px
     background-color: var(--theme-complementary-color)
     color: var(--main-color)
     padding: 0 15px
+    &::placeholder
+        color: var(--main-color)
+.button
+    transition: 0.5s
+    &:hover
+        &:enabled
+            background-color: var(--accent-color)
+    &:disabled
+        cursor: default
 .name
     text-align: center
+.page
+    text-align: center
+    color: var(--theme-complementary-color)
+    cursor: pointer
+    transition: 0.5s
+    &:hover
+        color: var(--accent-color)

@@ -2,10 +2,11 @@ import { FC } from "react";
 import styles from "./style.module.sass";
 
 interface TextProps {
-  children?: string;
+  children?: React.ReactNode;
   style?: string;
   type?: "h1" | "h2" | "h3" | "h4" | "h5" | "text" | "text_small";
   accent?: boolean;
+  onClick?: () => void;
 }
 
 const Text: FC<TextProps> = ({
@@ -13,6 +14,7 @@ const Text: FC<TextProps> = ({
   style,
   type = "text",
   accent = false,
+  onClick,
 }) => {
   function getTypeStyle(
     type: "h1" | "h2" | "h3" | "h4" | "h5" | "text" | "text_small"
@@ -44,6 +46,7 @@ const Text: FC<TextProps> = ({
 
   return (
     <div
+      onClick={onClick}
       className={[style, getTypeStyle(type), accent && styles._accent].join(
         " "
       )}
