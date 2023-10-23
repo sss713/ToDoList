@@ -159,15 +159,15 @@ const UserLoginForm: FC<UserLoginFormProps> = () => {
           style={styles.button}
           color={!isValid ? "_light" : "_dark"}
           disabled={!isValid}
-          onClick={
+          onClick={() => {
             isValid
               ? isRegistration
                 ? registerUser(email, password)
                 : authenticateUser(email, password)
-              : console.log("NO VALID")
-          }
+              : console.log("NO VALID");
+          }}
         >
-          <LinkTo iswork={false} src="/todo">
+          <LinkTo iswork={isValid} src="/todo">
             {isRegistration ? "Зарегистрироваться" : "Войти"}
           </LinkTo>
         </Button>
