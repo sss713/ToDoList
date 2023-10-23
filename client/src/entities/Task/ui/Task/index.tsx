@@ -7,9 +7,10 @@ interface TaskProps {
   id: number;
   description: string;
   name: string;
-  status: string;
-  dedline: string;
-  isFull: boolean;
+  status: number;
+  dedline: Date;
+  completed: Boolean;
+  isFull?: boolean;
 }
 
 const Task: FC<TaskProps> = ({
@@ -18,27 +19,18 @@ const Task: FC<TaskProps> = ({
   description,
   status,
   dedline,
-  isFull,
+  completed,
+  isFull = false,
 }) => {
   const [full, setFull] = useState(isFull);
-  function getTypeStyle(status: string) {
-    switch (status) {
-      case "completed": {
-        return styles._completed;
-      }
-      case "overdue": {
-        return styles._overdue;
-      }
-    }
-  }
   return (
-    <div key={id} className={[styles.task, getTypeStyle(status)].join(" ")}>
-      <ToggleButton type={status} />
+    <div key={id} className={[styles.task, completed].join(" ")}>
+      <ToggleButton type={completed ? "_completed" : ""} />
       <Text style={styles.name} onClick={() => setFull(!full)}>
         {name}
       </Text>
       <Text type="text_small" style={styles.dedline}>
-        {dedline}
+        {String(dedline)}
       </Text>
       {full && <Text style={styles.description}>{description}</Text>}
     </div>

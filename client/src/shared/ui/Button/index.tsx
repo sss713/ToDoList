@@ -8,7 +8,7 @@ interface ButtonProps {
   color?: "_light" | "_dark" | "_accent";
   type?: "button" | "submit" | "reset" | undefined;
   disabled?: boolean;
-  onClick?: () => void;
+  onClick?: any;
   onHover?: () => void;
 }
 
