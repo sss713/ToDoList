@@ -27,7 +27,6 @@ const UserLoginForm: FC<UserLoginFormProps> = () => {
     reset();
   });
   const [nickName, setNickName] = useState("");
-  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isRegistration, setIsRegistration] = useState(true);
@@ -95,40 +94,6 @@ const UserLoginForm: FC<UserLoginFormProps> = () => {
                 },
               })}
               onChange={(e) => setNickName(e.target.value)}
-            />
-          </Label>
-        )}
-        {isRegistration && (
-          <Label
-            name="Телефон"
-            errorHidden={Boolean(errors?.phone)}
-            errorMessage={errors?.phone?.message}
-          >
-            <input
-              placeholder="Телефон"
-              type="text"
-              value={phone}
-              className={[
-                styles.input,
-                errors?.phone && styles.input_error,
-              ].join(" ")}
-              {...register("phone", {
-                required: "Поле обязательно",
-                pattern: {
-                  value:
-                    /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im,
-                  message: "Введен не валидный номер телефона",
-                },
-                minLength: {
-                  value: 3,
-                  message: "Минимум 3 символа",
-                },
-                maxLength: {
-                  value: 20,
-                  message: "Максимум 20 символов",
-                },
-              })}
-              onChange={(e) => setPhone(e.target.value)}
             />
           </Label>
         )}
