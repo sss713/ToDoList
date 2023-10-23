@@ -4,7 +4,8 @@ TDtask_id serial Primary key,
 TDtask_name varchar(120),
 TDtask_description varchar(250),
 TDtask_status integer,
-TDtask_deadline date);
+TDtask_deadline date,
+TDtask_completed bool);
 create table users(user_id serial primary key,
 Login varchar(90),
 Password varchar(250),
