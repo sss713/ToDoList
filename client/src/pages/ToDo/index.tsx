@@ -22,7 +22,9 @@ function ToDo() {
     <div className={styles.taskRow}>
       <UserLogout />
       <TasksRow tasks={tasks} />
-      <TelegrammButton />
+      <TelegrammButton
+        onClick={() => (window.location.href = "https://t.me/ToDo_teambot")}
+      />
       {isCreatingTask ? (
         <TaskCard
           isHidden={isCreatingTask}
