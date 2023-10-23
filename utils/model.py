@@ -44,7 +44,6 @@ class ND(Base):
 
 class Model():
     def __init__(self):
-        # self.engine = create_engine('sqlite:///user_db.db')
         self.engine = create_engine('sqlite:///ToDoTasks.db')
         self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()

@@ -13,8 +13,8 @@ from utils.StateGP import StateStatus
 from utils.model import Model, User, ToDoTask, ND
 from aiogram.fsm.context import FSMContext
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
-
-
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.filters import Command
 
 from aiogram import Bot, Dispatcher, Router, types
 from aiogram.enums import ParseMode
@@ -48,11 +48,17 @@ async def background_task(chat_id):
     user_chat_id = chat_id
     while True:
         await send_daily_task_notifications(user_chat_id)
-        await asyncio.sleep(15)
+        await asyncio.sleep(70)
 
 @dp.message(CommandStart())
-async def get_phone(message: Message, state:FSMContext):
-    ReplyKeyboardRemove()
+async def start(message: Message):
+    await message.answer('Этот бот создан для просмотра ваших задач и уведомления! \n '
+                         'Чтобы войти вы должны быть зарегистрированы на сайте - https://savitto.ru/ \n'
+                         'После регистрации на сайте пишите /login')
+
+
+@dp.message(Command("login"))
+async def start_to_login(message: Message, state: FSMContext):
     await message.answer(f'{message.from_user.full_name}, введите логин: ')
     await state.set_state(StateStatus.get_login)
 
@@ -95,15 +101,14 @@ async def get_password(message: types.Message, state:FSMContext):
         await background_task(message.chat.id)
 
     else:
-        await message.answer('Пароль неверный, попробуйте еще раз вести логин')
-        await state.set_state(StateStatus.get_login)
+        await message.answer('Пароль неверный, попробуйте еще раз вести другой')
+        await state.set_state(StateStatus.get_password)
     session.close()
 
 @dp.message(StateStatus.after_auth)
 async def menu(message: Message, state:FSMContext):
     kb = [
         [KeyboardButton(text='Свои задачи')],
-        [KeyboardButton(text='Профиль')],
         [KeyboardButton(text='Отказаться от уведомлений')],
         [KeyboardButton(text='Включить уведомления')]
     ]
@@ -151,8 +156,6 @@ async def show_tasks(message: Message, state: FSMContext):
     await message.answer(f'{message_text}')
 
 
-
-
 async def main() -> None:
     global bot
     bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
@@ -160,6 +163,6 @@ async def main() -> None:
 
 
 if __name__ == '__main__':
-    Model().create_table()
+    # Model().create_table()
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     asyncio.run(main())
