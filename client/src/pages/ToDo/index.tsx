@@ -1,6 +1,10 @@
 import TasksRow from "entities/Task/ui/TaskRow";
+import AddButton from "shared/ui/AddButton";
 import styles from "./style.module.sass";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import UserLogout from "entities/User/ui/UserLogout";
+import TaskCard from "entities/Task/ui/TaskCard";
+import TelegrammButton from "shared/ui/TelegrammButton";
 interface TaskProps {
   id: number;
   name: string;
@@ -12,23 +16,24 @@ interface TaskProps {
 
 function ToDo() {
   const [tasks, setTasks] = useState<TaskProps[]>([]);
-  useEffect(() => {
-    try {
-      fetch("http://localhost//api/posts/all")
-        .then((response) => response.json())
-        .then((data) => {
-          setTasks(data);
-          console.log(data);
-        })
-        .catch((error) => console.log(error));
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+  const [isCreatingTask, setCreatingTask] = useState(false);
 
   return (
     <div className={styles.taskRow}>
+      <UserLogout />
       <TasksRow tasks={tasks} />
+      <TelegrammButton />
+      {isCreatingTask ? (
+        <TaskCard
+          isHidden={isCreatingTask}
+          setHidden={() => setCreatingTask(!isCreatingTask)}
+          editing={true}
+        />
+      ) : (
+        <AddButton onClick={() => setCreatingTask(!isCreatingTask)}>
+          +
+        </AddButton>
+      )}
     </div>
   );
 }

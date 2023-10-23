@@ -1,0 +1,51 @@
+@import "../../../../shared/styles/vars"
+
+.form__container
+    position: absolute
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+    background-color: var(--main-color)
+    width: 500px
+    height: 477px
+    border-radius: 30px
+    padding: 50px 15px
+    top: 50%
+    left: 50%
+    transform: translate(-50%, -50%)
+    box-shadow: 0 0 10px 5px var(--theme-complementary-color)
+.form
+    display: flex
+    flex-direction: column
+    align-items: center
+    align-content: stretch
+    justify-content: center
+    width: 100%
+    height: 100%
+.input
+    width: 100%
+    min-height: 50px
+    height: 100%
+    background-color: var(--theme-complementary-color)
+    color: var(--main-color)
+    padding: 15px 15px
+    resize: none
+    &::placeholder
+        color: var(--main-color)
+.description
+    display: flex
+    justify-content: center
+    align-content: stretch
+    width: 100%
+    height: 100%
+.nickName
+    flex: 7
+.dedline
+    flex: 3
+.button
+    right: auto
+    top: auto
+    bottom: 0
+.name
+    text-align: center
