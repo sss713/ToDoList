@@ -22,6 +22,7 @@ class User(Base):
     Login = Column(String(90))
     Password = Column(String(250))
     Nickname = Column(String(250))
+    telegram_id = Column(Integer)
 
 
 class ND(Base):
@@ -44,7 +45,7 @@ class ND(Base):
 class Model():
     def __init__(self):
         # self.engine = create_engine('sqlite:///user_db.db')
-        self.engine = create_engine('sqlite:///ToDoTask.db')
+        self.engine = create_engine('sqlite:///ToDoTasks.db')
         self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()
 

@@ -6,6 +6,6 @@ class StateStatus(StatesGroup):
     get_password = State()
     after_auth = State()
     befor_auth = State()
-
-    profile = State()
-    list_of_task = State()
+    #
+    # profile = State()
+    # list_of_task = State()
