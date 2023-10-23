@@ -14,9 +14,6 @@ from utils.model import Model, User, ToDoTask, ND
 from aiogram.fsm.context import FSMContext
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 
-# импорт кнопок(ранний вариант)
-# from utils.KeyBoards import KeyBoard
-
 
 
 from aiogram import Bot, Dispatcher, Router, types
@@ -28,30 +25,10 @@ from aiogram.utils.markdown import hbold
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 
 
-# async def send_notifications(user_chat_id):
-#     while True:
-#         session = Model().session
-#         # data_user = session.query(User.Login).filter(User.telegram_id == user_chat_id).first()
-#         query = session.query(ToDoTask.TDtask_name, ToDoTask.TDtask_description, ToDoTask.TDtask_deadline). \
-#             join(ND, ToDoTask.TDtask_id == ND.TDtask_id). \
-#             join(User, ND.user_id == User.user_id). \
-#             filter(User.Login == 'admin').all()
-#
-#         for send in query:
-#             date_string = send[2]
-#             year, month, day = map(int, date_string.split('-'))
-#             now_date = datetime.datetime.now()
-#             target_date = datetime.datetime(year, month, day)
-#             time_difference = target_date - now_date
-#             days = time_difference.days
-#
-#             await bot.send_message(user_chat_id, f'{send[0]} - {send[1]} - {send[2]}')
-#
-
 async def send_daily_task_notifications(user_chat_id):
-    # today = datetime.datetime.now().strftime('%Y-%m-%d')
-    formatted_date = datetime.datetime(2023, 12, 31)
-    today = formatted_date.strftime('%Y-%m-%d')
+    today = datetime.datetime.now().strftime('%Y-%m-%d')
+    # formatted_date = datetime.datetime(2023, 12, 31)
+    # today = formatted_date.strftime('%Y-%m-%d')
 
     session = Model().session
     query = session.query(ToDoTask.TDtask_name, ToDoTask.TDtask_description, ToDoTask.TDtask_deadline). \
@@ -60,10 +37,10 @@ async def send_daily_task_notifications(user_chat_id):
         filter(ToDoTask.TDtask_deadline == today). \
         filter(User.telegram_id == user_chat_id).all()
     if query:
-        task_lst = []
-        for task in query:
-            task_lst.append(f'{task[0]} - {task[1]} - {task[2]}')
-        await bot.send_message(user_chat_id, f'Вам нужно выполнить следующие задачи на сегодня: {task_lst}')
+        task_lst = [f'{task[0]} - {task[1]} - {task[2]}' for task in query]
+        task_str = '\n'.join(task_lst)
+        message_text = f'Вам нужно выполнить следующие задачи на сегодня:\n{task_str}'
+        await bot.send_message(user_chat_id, message_text)
 
     session.close()
 
@@ -71,7 +48,7 @@ async def background_task(chat_id):
     user_chat_id = chat_id
     while True:
         await send_daily_task_notifications(user_chat_id)
-        await asyncio.sleep(30)
+        await asyncio.sleep(15)
 
 @dp.message(CommandStart())
 async def get_phone(message: Message, state:FSMContext):
@@ -113,9 +90,10 @@ async def get_password(message: types.Message, state:FSMContext):
         session.close()
         # await send_daily_task_notifications(message.from_user.id)
         # await send_notifications(message.from_user.id)
-        await background_task(12432134)
         await state.set_state(StateStatus.after_auth)
         await menu(message, state)
+        await background_task(message.chat.id)
+
     else:
         await message.answer('Пароль неверный, попробуйте еще раз вести логин')
         await state.set_state(StateStatus.get_login)
@@ -125,15 +103,55 @@ async def get_password(message: types.Message, state:FSMContext):
 async def menu(message: Message, state:FSMContext):
     kb = [
         [KeyboardButton(text='Свои задачи')],
-        [KeyboardButton(text='Профиль')]
+        [KeyboardButton(text='Профиль')],
+        [KeyboardButton(text='Отказаться от уведомлений')],
+        [KeyboardButton(text='Включить уведомления')]
     ]
     keyboard = ReplyKeyboardMarkup(keyboard=kb)
     await message.answer('Выберите действие: ', reply_markup=keyboard)
+    await state.set_state(StateStatus.profile)
 
 
-# @dp.message(StateStatus.profile, lambda message: message.text == "Профиль", StateStatus.profile)
-# async def profile(message: Message, state:FSMContext):
-#     pass
+@dp.message(StateStatus.profile, lambda message: message.text == "Отказаться от уведомлений")
+async def remove_notifications(message: Message, state: FSMContext):
+    session = Model().session
+    data = await state.get_data()
+    session.query(User).filter(User.Login == data['login_FSM']).update({'telegram_id': None})
+    session.commit()
+    session.close()
+    await message.answer('Уведомления отключены')
+    await state.set_state(StateStatus.after_auth)
+    await menu(message, state)
+
+
+@dp.message(StateStatus.profile, lambda message: message.text == "Включить уведомления")
+async def add_notifications(message: Message, state: FSMContext):
+    session = Model().session
+    data = await state.get_data()
+    session.query(User).filter(User.Login == data['login_FSM']).update({'telegram_id': message.chat.id})
+    session.commit()
+    session.close()
+    await message.answer('Уведомления включены')
+    await state.set_state(StateStatus.after_auth)
+    await menu(message, state)
+
+@dp.message(StateStatus.profile, lambda message: message.text == "Свои задачи")
+async def show_tasks(message: Message, state: FSMContext):
+    session = Model().session
+    data = await state.get_data()
+    query = session.query(ToDoTask.TDtask_name, ToDoTask.TDtask_description, ToDoTask.TDtask_deadline). \
+        join(ND, ToDoTask.TDtask_id == ND.TDtask_id). \
+        join(User, ND.user_id == User.user_id). \
+        filter(User.Login == data['login_FSM']).all()
+    message_text = "Ваши задачи:\n"
+    for idx, task in enumerate(query, start=1):
+        task_name, task_description, task_deadline = task
+        message_text += f"{idx}. Название: {task_name}\n   Описание: {task_description}\n   Дедлайн: {task_deadline}\n"
+
+    await message.answer(f'{message_text}')
+
+
+
 
 async def main() -> None:
     global bot
