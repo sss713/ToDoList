@@ -1,0 +1,14 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #9a9a9a;
+}
+#root {
+  width: 100%;
+}
