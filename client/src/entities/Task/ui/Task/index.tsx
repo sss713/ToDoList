@@ -32,9 +32,6 @@ const Task: FC<TaskProps> = ({
       <Text type="text_small" style={styles.dedline}>
         {dedline.toLocaleDateString()}
       </Text>
-      <Text type="text_small" style={styles.dedline}>
-        {dedline.toLocaleDateString()}
-      </Text>
       {full && <Text style={styles.description}>{description}</Text>}
     </div>
   );

@@ -15,7 +15,16 @@ interface TaskProps {
 }
 
 function ToDo() {
-  const [tasks, setTasks] = useState<TaskProps[]>([]);
+  const [tasks, setTasks] = useState<TaskProps[]>([
+    {
+      id: 1,
+      name: "Task1",
+      status: 0,
+      description: "lamslkdmlksm",
+      dedline: new Date(),
+      comleted: false,
+    },
+  ]);
   const [isCreatingTask, setCreatingTask] = useState(false);
 
   return (
@@ -27,7 +36,6 @@ function ToDo() {
       />
       {isCreatingTask ? (
         <TaskCard
-          isHidden={isCreatingTask}
           setHidden={() => setCreatingTask(!isCreatingTask)}
           editing={true}
         />
