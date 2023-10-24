@@ -8,8 +8,7 @@ interface ButtonProps {
   color?: "_light" | "_dark" | "_accent";
   type?: "button" | "submit" | "reset" | undefined;
   disabled?: boolean;
-  onClick?: () => void;
-  onHover?: () => void;
+  onClick?: any;
 }
 
 const Button: FC<ButtonProps> = ({
@@ -20,7 +19,6 @@ const Button: FC<ButtonProps> = ({
   type,
   disabled = false,
   onClick,
-  onHover,
 }) => {
   function getSizeStyle(size: "_large" | "_medium" | "_small") {
     switch (size) {
@@ -59,7 +57,6 @@ const Button: FC<ButtonProps> = ({
         getColorStyle(color),
       ].join(" ")}
       onClick={onClick}
-      onMouseEnter={onHover}
     >
       {children}
     </button>

@@ -5,10 +5,13 @@ TDtask_name varchar(120),
 TDtask_description varchar(250),
 TDtask_status integer,
 TDtask_deadline date,
-TDtask_completed bool);
+TDtask_completed boolean);
+>>>>>>> frontend
 create table users(user_id serial primary key,
 Login varchar(90),
 Password varchar(250),
+Login varchar(90),
+Telegramm_id integer,
 Nickname varchar(250));
 create table nd(ND_id serial,
 TDtask_id int,

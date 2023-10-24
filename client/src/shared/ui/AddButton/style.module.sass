@@ -1,0 +1,25 @@
+@import "../../styles/vars"
+
+.button
+    position: absolute
+    width: 100px
+    height: 100px
+    bottom: 50px
+    right: 110px
+    display: flex
+    align-items: center
+    justify-content: center
+    border-radius: 100%
+    margin: 15px auto
+    transition: 0.5s
+    background-color: var(--accent-complementary-color)
+    div
+        color: var(--main-color)
+    &:hover
+        &:enabled
+            background-color: var(--accent-color)
+    &:disabled
+        background-color: var(--unactive-color)
+        cursor: default
+        div
+            color: var(--unactive-complementary-color)
