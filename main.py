@@ -6,13 +6,13 @@ import time
 from os import getenv
 
 from aiogram.fsm import state
-
+from aiogram import F
 from settings.config import dp, TOKEN
 from utils import StateGP
 from utils.StateGP import StateStatus
 from utils.model import Model, User, ToDoTask, ND
 from aiogram.fsm.context import FSMContext
-from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove, CallbackQuery
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.filters import Command
 
@@ -48,13 +48,48 @@ async def background_task(chat_id):
     user_chat_id = chat_id
     while True:
         await send_daily_task_notifications(user_chat_id)
-        await asyncio.sleep(70)
+        await asyncio.sleep(15)
 
 @dp.message(CommandStart())
 async def start(message: Message):
     await message.answer('Этот бот создан для просмотра ваших задач и уведомления! \n '
                          'Чтобы войти вы должны быть зарегистрированы на сайте - https://savitto.ru/ \n'
-                         'После регистрации на сайте пишите /login')
+                         'После регистрации на сайте пишите /login\n'
+                         'Тестовые данные: \n'
+                         'Login: admin\n'
+                         'Password: 0000')
+
+@dp.message(StateStatus.profile, lambda message: message.text == "Свои задачи")
+async def test(message: Message, state: FSMContext):
+    session = Model().session
+    # data = await state.get_data()
+    query = session.query(ToDoTask.TDtask_id, ToDoTask.TDtask_name, ToDoTask.TDtask_description, ToDoTask.TDtask_deadline). \
+        join(ND, ToDoTask.TDtask_id == ND.TDtask_id). \
+        join(User, ND.user_id == User.user_id). \
+        filter(User.Login == 'admin').all()
+
+    for task_object in query:
+        id_nickname = task_object[0]
+        select_text = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text='Удалить', callback_data=f'delete_task {task_object[0]}')]
+        ])
+
+        await message.answer(f'{task_object[1]}', reply_markup=select_text)
+
+@dp.callback_query(lambda cal: F.data == 'delete_task')
+async def some_test(callback: CallbackQuery):
+    session = Model().session
+    parametr = callback.data.split()
+    id_task = parametr[1]
+    task_to_delete = session.query(ToDoTask).filter(ToDoTask.TDtask_id == id_task).first()
+
+    if task_to_delete:
+        session.delete(task_to_delete)
+        session.commit()
+        await callback.answer('Удалено')
+        await callback.message.delete()
+    else:
+        await callback.answer('Ошибка удаления задачи')
 
 
 @dp.message(Command("login"))
@@ -140,20 +175,20 @@ async def add_notifications(message: Message, state: FSMContext):
     await state.set_state(StateStatus.after_auth)
     await menu(message, state)
 
-@dp.message(StateStatus.profile, lambda message: message.text == "Свои задачи")
-async def show_tasks(message: Message, state: FSMContext):
-    session = Model().session
-    data = await state.get_data()
-    query = session.query(ToDoTask.TDtask_name, ToDoTask.TDtask_description, ToDoTask.TDtask_deadline). \
-        join(ND, ToDoTask.TDtask_id == ND.TDtask_id). \
-        join(User, ND.user_id == User.user_id). \
-        filter(User.Login == data['login_FSM']).all()
-    message_text = "Ваши задачи:\n"
-    for idx, task in enumerate(query, start=1):
-        task_name, task_description, task_deadline = task
-        message_text += f"{idx}. Название: {task_name}\n   Описание: {task_description}\n   Дедлайн: {task_deadline}\n"
-
-    await message.answer(f'{message_text}')
+# @dp.message(StateStatus.profile, lambda message: message.text == "Свои задачи")
+# async def show_tasks(message: Message, state: FSMContext):
+#     session = Model().session
+#     data = await state.get_data()
+#     query = session.query(ToDoTask.TDtask_name, ToDoTask.TDtask_description, ToDoTask.TDtask_deadline). \
+#         join(ND, ToDoTask.TDtask_id == ND.TDtask_id). \
+#         join(User, ND.user_id == User.user_id). \
+#         filter(User.Login == data['login_FSM']).all()
+#     message_text = "Ваши задачи:\n"
+#     for idx, task in enumerate(query, start=1):
+#         task_name, task_description, task_deadline = task
+#         message_text += f"{idx}. Название: {task_name}\n   Описание: {task_description}\n   Дедлайн: {task_deadline}\n"
+#
+#     await message.answer(f'{message_text}')
 
 
 async def main() -> None:
