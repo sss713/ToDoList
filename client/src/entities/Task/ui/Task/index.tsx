@@ -2,6 +2,7 @@ import { FC, useState } from "react";
 import styles from "./style.module.sass";
 import ToggleButton from "shared/ui/ToggleButton";
 import Text from "shared/ui/Text";
+import TaskCard from "../TaskCard";
 
 interface TaskProps {
   id: number;
@@ -9,8 +10,8 @@ interface TaskProps {
   name: string;
   status: number;
   dedline: Date;
-  completed: Boolean;
-  isFull?: boolean;
+  completed: boolean;
+  onclick?: () => void;
 }
 
 const Task: FC<TaskProps> = ({
@@ -20,22 +21,31 @@ const Task: FC<TaskProps> = ({
   status,
   dedline,
   completed,
-  isFull = false,
 }) => {
-  const [full, setFull] = useState(isFull);
+  const [isCreatingTask, setCreatingTask] = useState(false);
+  const [isEditing, setEditing] = useState(false);
   return (
-    <div key={id} className={[styles.task, completed].join(" ")}>
+    <div
+      key={id}
+      className={[styles.task, completed].join(" ")}
+      onClick={() => setCreatingTask(!isCreatingTask)}
+    >
       <ToggleButton type={completed ? "_completed" : ""} />
-      <Text style={styles.name} onClick={() => setFull(!full)}>
-        {name}
-      </Text>
+      <Text style={styles.name}>{name}</Text>
       <Text type="text_small" style={styles.dedline}>
         {dedline.toLocaleDateString()}
       </Text>
-      <Text type="text_small" style={styles.dedline}>
-        {dedline.toLocaleDateString()}
-      </Text>
-      {full && <Text style={styles.description}>{description}</Text>}
+      {isCreatingTask && (
+        <TaskCard
+          setHidden={() => setCreatingTask(!isCreatingTask)}
+          isEditing={isEditing}
+          setEditing={() => setEditing(!isEditing)}
+          taskName={name}
+          description={description}
+          dedline={dedline}
+          importance={status}
+        />
+      )}
     </div>
   );
 };

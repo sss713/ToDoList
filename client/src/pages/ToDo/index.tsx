@@ -17,19 +17,27 @@ interface TaskProps {
 function ToDo() {
   const [tasks, setTasks] = useState<TaskProps[]>([]);
   const [isCreatingTask, setCreatingTask] = useState(false);
-
+  const [isEditing, setEditing] = useState(true);
+  const date: TaskProps = {
+    id: 1,
+    name: "asdas",
+    description: "asdsaasd",
+    status: 1,
+    dedline: new Date(),
+    comleted: true,
+  };
   return (
     <div className={styles.taskRow}>
       <UserLogout />
-      <TasksRow tasks={tasks} />
+      <TasksRow tasks={[date]} />
       <TelegrammButton
         onClick={() => (window.location.href = "https://t.me/ToDo_teambot")}
       />
       {isCreatingTask ? (
         <TaskCard
-          isHidden={isCreatingTask}
           setHidden={() => setCreatingTask(!isCreatingTask)}
-          editing={true}
+          isEditing={isEditing}
+          setEditing={() => setEditing(!isEditing)}
         />
       ) : (
         <AddButton onClick={() => setCreatingTask(!isCreatingTask)}>

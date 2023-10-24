@@ -13,15 +13,23 @@ type TaskData = {
 };
 
 interface TaskCardProps {
-  editing?: boolean;
-  isHidden: boolean;
+  isEditing?: boolean;
+  setEditing?: () => void;
   setHidden: () => void;
+  taskName?: string;
+  description?: string;
+  importance?: number;
+  dedline?: Date;
 }
 
 const TaskCard: FC<TaskCardProps> = ({
-  editing = false,
-  isHidden,
+  isEditing,
+  setEditing,
   setHidden,
+  taskName: task = "",
+  description: desc = "",
+  importance: imp = 0,
+  dedline: ded = new Date(),
 }) => {
   const {
     register,
@@ -33,11 +41,10 @@ const TaskCard: FC<TaskCardProps> = ({
     console.log(JSON.stringify(data));
     reset();
   });
-  const [taskName, setTaskName] = useState("");
-  const [description, setDescription] = useState("");
-  // const [importance, setImportance] = useState(0);
-  const [isEditing, setEditing] = useState(editing);
-  const [dedline, setDedline] = useState(new Date());
+  const [taskName, setTaskName] = useState(task);
+  const [description, setDescription] = useState(desc);
+  // const [importance, setImportance] = useState(imp);
+  const [dedline, setDedline] = useState(ded);
 
   return (
     <div className={styles.form__container}>
@@ -140,9 +147,7 @@ const TaskCard: FC<TaskCardProps> = ({
           <AddButton
             type="button"
             style={styles.button}
-            onClick={() => {
-              setEditing(!isEditing);
-            }}
+            onClick={() => setEditing}
           >
             ✎
           </AddButton>
