@@ -7,7 +7,7 @@ import { authMiddleware } from "../middleware/auth.middleware.js";
 
 const router = new Router();
 
-router.post('/registration',
+router.post('http://localhost:5000/api/registration',
 async (req, res) => {
     try {
 
@@ -39,7 +39,7 @@ async (req, res) => {
     }
 })
 
-router.post('/authorization',
+router.post('http://localhost:5000/api//authorization',
 
 async (req, res) => {
 

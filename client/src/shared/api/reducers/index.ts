@@ -10,7 +10,7 @@ import tasksReducer from "./tasksReducer";
 
 const rootReducer = combineReducers({
   user: userReducer,
-  // tasks: tasksReducer,
+  tasks: tasksReducer,
 });
 
 export const store = createStore(

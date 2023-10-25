@@ -11,4 +11,4 @@ router.get('/posts/one', postController.getOne)
 router.put('/posts', postController.update)
 router.delete('/posts/del', postController.delete)
 
-export default router;
+module.exports =  router;
