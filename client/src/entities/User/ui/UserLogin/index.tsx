@@ -8,6 +8,7 @@ import Button from "shared/ui/Button";
 
 type UserLoginFormData = {
   nickName: string;
+  phone: string;
   email: string;
   password: string;
 };
@@ -25,7 +26,42 @@ const UserLoginForm: FC<UserLoginFormProps> = () => {
     console.log(JSON.stringify(data));
     reset();
   });
+  const [nickName, setNickName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isRegistration, setIsRegistration] = useState(true);
+
+  const registerUser = async (login: string, password: string) => {
+    try {
+      const response = await fetch("http://localhost/api/registration", {
+        method: "POST",
+        body: JSON.stringify({ login, password }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const authenticateUser = async (login: string, password: string) => {
+    try {
+      const response = await fetch("http://localhost/api/authorization", {
+        method: "POST",
+        body: JSON.stringify({ login, password }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className={styles.form__container}>
       <Text type="h2" style={styles.name}>
@@ -41,6 +77,7 @@ const UserLoginForm: FC<UserLoginFormProps> = () => {
             <input
               placeholder="Никнейм"
               type="text"
+              value={nickName}
               className={[
                 styles.input,
                 errors?.nickName && styles.input_error,
@@ -53,9 +90,10 @@ const UserLoginForm: FC<UserLoginFormProps> = () => {
                 },
                 maxLength: {
                   value: 20,
-                  message: "Минимум 20 символов",
+                  message: "Максимум 20 символов",
                 },
               })}
+              onChange={(e) => setNickName(e.target.value)}
             />
           </Label>
         )}
@@ -67,6 +105,7 @@ const UserLoginForm: FC<UserLoginFormProps> = () => {
           <input
             placeholder="Email"
             type="email"
+            value={email}
             className={[styles.input, errors?.email && styles.input_error].join(
               " "
             )}
@@ -83,9 +122,10 @@ const UserLoginForm: FC<UserLoginFormProps> = () => {
               },
               maxLength: {
                 value: 20,
-                message: "Минимум 20 символов",
+                message: "Максимум 20 символов",
               },
             })}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </Label>
         <Label
@@ -96,6 +136,7 @@ const UserLoginForm: FC<UserLoginFormProps> = () => {
           <input
             placeholder="Пароль"
             type="password"
+            value={password}
             className={[
               styles.input,
               errors?.password && styles.input_error,
@@ -108,9 +149,10 @@ const UserLoginForm: FC<UserLoginFormProps> = () => {
               },
               maxLength: {
                 value: 16,
-                message: "Минимум 16 символов",
+                message: "Максимум 16 символов",
               },
             })}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </Label>
         <Button
@@ -118,6 +160,11 @@ const UserLoginForm: FC<UserLoginFormProps> = () => {
           style={styles.button}
           color={!isValid ? "_light" : "_dark"}
           disabled={!isValid}
+          onClick={() => {
+            isValid && isRegistration
+              ? registerUser(email, password)
+              : authenticateUser(email, password);
+          }}
         >
           <LinkTo iswork={isValid} src="/todo">
             {isRegistration ? "Зарегистрироваться" : "Войти"}

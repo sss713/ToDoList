@@ -6,12 +6,13 @@ interface TaskProps {
   id: number;
   name: string;
   description: string;
-  status: string;
-  dedline: string;
+  status: number;
+  dedline: Date;
+  comleted: boolean;
 }
 
 interface TasksRowProps {
-  tasks: TaskProps[];
+  tasks: TaskProps[] | undefined;
 }
 
 const TasksRow: FC<TasksRowProps> = ({ tasks }) => {
@@ -24,8 +25,8 @@ const TasksRow: FC<TasksRowProps> = ({ tasks }) => {
           description={t.description}
           status={t.status}
           dedline={t.dedline}
-          isFull={false}
-        ></Task>
+          completed={t.comleted}
+        />
       ))}
     </div>
   );

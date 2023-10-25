@@ -29,7 +29,7 @@ const ToggleButton: FC<ToggleButtonProps> = ({
   return (
     <div className={[style, getTypeStyle(type), styles.toggle].join(" ")}>
       <button className={styles.button} onClick={onClick}>
-        {type == "completed" ? <Text>✓</Text> : <></>}
+        {type === "completed" ? <Text>✓</Text> : <></>}
       </button>
     </div>
   );
