@@ -20,6 +20,7 @@ const TasksRow: FC<TasksRowProps> = ({ tasks }) => {
     <div className={styles.task__container}>
       {tasks?.map((t) => (
         <Task
+          key={t.id}
           id={t.id}
           name={t.name}
           description={t.description}
