@@ -35,6 +35,7 @@ const Task: FC<TaskProps> = ({
       <Text type="text_small" style={styles.dedline}>
         {dedline.toLocaleDateString()}
       </Text>
+<<<<<<< HEAD
       {isCreatingTask && (
         <TaskCard
           setHidden={() => setCreatingTask(!isCreatingTask)}
@@ -46,6 +47,9 @@ const Task: FC<TaskProps> = ({
           importance={status}
         />
       )}
+=======
+      {full && <Text style={styles.description}>{description}</Text>}
+>>>>>>> temp
     </div>
   );
 };

@@ -13,8 +13,12 @@ type TaskData = {
 };
 
 interface TaskCardProps {
+<<<<<<< HEAD
   isEditing?: boolean;
   setEditing?: () => void;
+=======
+  editing?: boolean;
+>>>>>>> temp
   setHidden: () => void;
   taskName?: string;
   description?: string;
@@ -22,6 +26,7 @@ interface TaskCardProps {
   dedline?: Date;
 }
 
+<<<<<<< HEAD
 const TaskCard: FC<TaskCardProps> = ({
   isEditing,
   setEditing,
@@ -31,6 +36,9 @@ const TaskCard: FC<TaskCardProps> = ({
   importance: imp = 0,
   dedline: ded = new Date(),
 }) => {
+=======
+const TaskCard: FC<TaskCardProps> = ({ editing = false, setHidden }) => {
+>>>>>>> temp
   const {
     register,
     formState: { errors, isValid },
@@ -48,7 +56,7 @@ const TaskCard: FC<TaskCardProps> = ({
 
   return (
     <div className={styles.form__container}>
-      <Close onClick={() => setHidden} />
+      <Close onClick={setHidden} />
       <form onSubmit={onSubmit} className={styles.form}>
         <Label
           errorHidden={Boolean(errors?.taskName)}
@@ -92,11 +100,6 @@ const TaskCard: FC<TaskCardProps> = ({
             ].join(" ")}
             {...register("dedline", {
               required: "Поле обязательно",
-              // pattern: {
-              //   value:
-              //     /^(?:(?:(?:0?[13578]|1[02])(\/|-|\.)31)\1|(?:(?:0?[1,3-9]|1[0-2])(\/|-|\.)(?:29|30)\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:0?2(\/|-|\.)29\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:(?:0?[1-9])|(?:1[0-2]))(\/|-|\.)(?:0?[1-9]|1\d|2[0-8])\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/,
-              //   message: "Введено не валидное время",
-              // },
             })}
             onChange={(e) => {
               const date = new Date(e.target.value);

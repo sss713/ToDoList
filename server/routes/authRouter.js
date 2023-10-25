@@ -11,7 +11,7 @@ router.post('/registration',
 async (req, res) => {
     try {
 
-        const {login, password} = req.body
+        const {login, password, nickname} = req.body
 
         if (login.length > 3 && login.length < 20){
 
@@ -22,7 +22,7 @@ async (req, res) => {
                     return res.status(400).json({message: `User with login: ${login} already exist`})
                 } else {
                     const hashPassword = await bcrypt.hash(password, 7)
-                    const user = await db.query('INSERT INTO users (login, password) values ($1, $2) RETURNING *', [login, hashPassword])
+                    const user = await db.query('INSERT INTO users (login, password, nickname) values ($1, $2, $3) RETURNING *', [login, hashPassword, nickname])
                     return res.status(200).json({message: `Hi ${login}! Registration successful!`});
                 }
 
@@ -45,7 +45,7 @@ async (req, res) => {
 
     try {
         const {login, password} = req.body
-        const candidate = await db.query('SELECT id, login, password FROM users where login = $1', [login])
+        const candidate = await db.query('SELECT user_id, login, nickname, password FROM users where login = $1', [login])
         if (candidate.rows.length === 0 || candidate.rows[0].login !== login) {
             return res.status(400).json({message: "Invalid password or username"})
         } else {
@@ -59,7 +59,8 @@ async (req, res) => {
                     token,
                     user: {
                         id: candidate.rows[0].id,
-                        login: candidate.rows[0].login
+                        login: candidate.rows[0].login,
+                        nickname: candidate.rows[0].nickname,
                     }
                 })
             }
@@ -77,7 +78,7 @@ router.get('/auth', authMiddleware,
     async (req, res) => {
         try {
         const {login} = req.body
-        const user = await db.query('SELECT id, login, password FROM users where login = $1', [login])
+        const user = await db.query('SELECT id, login, nickname,cd password FROM users where login = $1', [login])
         console.log(req.id)
         const token = jwt.sign({id: candidate.rows[0].id}, config.get("authRouter.secretKey"), {expiresIn: "1h"})
         console.log(token)
@@ -85,7 +86,8 @@ router.get('/auth', authMiddleware,
                     token,
                     user: {
                         id: candidate.rows[0].id,
-                        login: candidate.rows[0].login
+                        login: candidate.rows[0].login,
+                        nickname: candidate.rows[0].nickname,
                     }
                 })
     } catch (e) {

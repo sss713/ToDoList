@@ -5,6 +5,8 @@ import LinkTo from "shared/ui/LinkTo";
 import Text from "shared/ui/Text";
 import Label from "shared/ui/Label";
 import Button from "shared/ui/Button";
+import { login, registration } from "entities/User/model/user";
+import { useDispatch } from "react-redux";
 
 type UserLoginFormData = {
   nickName: string;
@@ -30,37 +32,7 @@ const UserLoginForm: FC<UserLoginFormProps> = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isRegistration, setIsRegistration] = useState(true);
-
-  const registerUser = async (login: string, password: string) => {
-    try {
-      const response = await fetch("http://localhost/api/registration", {
-        method: "POST",
-        body: JSON.stringify({ login, password }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  const authenticateUser = async (login: string, password: string) => {
-    try {
-      const response = await fetch("http://localhost/api/authorization", {
-        method: "POST",
-        body: JSON.stringify({ login, password }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const dispatch: any = useDispatch();
 
   return (
     <div className={styles.form__container}>
@@ -162,8 +134,8 @@ const UserLoginForm: FC<UserLoginFormProps> = () => {
           disabled={!isValid}
           onClick={() => {
             isValid && isRegistration
-              ? registerUser(email, password)
-              : authenticateUser(email, password);
+              ? registration(email, password, nickName)
+              : dispatch(login(email, password));
           }}
         >
           <LinkTo iswork={isValid} src="/todo">
