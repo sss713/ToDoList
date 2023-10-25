@@ -134,7 +134,7 @@ const UserLoginForm: FC<UserLoginFormProps> = () => {
           disabled={!isValid}
           onClick={() => {
             isValid && isRegistration
-              ? registration(email, password)
+              ? registration(email, password, nickName)
               : dispatch(login(email, password));
           }}
         >

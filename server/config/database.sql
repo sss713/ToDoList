@@ -6,8 +6,6 @@ TDtask_name varchar(60),
 TDtask_description varchar(250),
 TDtask_status integer,
 TDtask_deadline date,
-create table users(user_id serial primary key,
-Login varchar(90),
 TDtask_completed boolean
 );
 
