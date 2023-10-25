@@ -1,23 +1,106 @@
-import { setTasks } from "./../../../shared/api/reducers/tasksReducer";
+import {
+  getTask,
+  getTasks,
+  removeTask,
+  setTask,
+  updateTask,
+} from "./../../../shared/api/reducers/tasksReducer";
 import axios from "axios";
 import { Dispatch } from "redux";
-const TasksRouter = require("../../../../../server/routes/post.routes");
+const TasksRouter = require("../../../../../server/routes/postRouter");
 
-// router.post('/posts', postController.create)
-// router.get('/posts/all', postController.getAll)
-// router.get('/posts/one', postController.getOne)
-// router.put('/posts', postController.update)
-// router.delete('/posts/del', postController.delete)
-export const set_tasks = (
+export const createPost = (
   name: string,
   description: string,
   status: number,
-  dedline: Date,
-  completed: boolean
+  deadline: Date,
+  completed: boolean,
+  userId: number
 ) => {
   return async (dispatch: Dispatch) => {
     try {
-      // dispatch(setTasks(response.data.tasks));
+      const response = await axios.post("http://localhost:5000/api/posts", {
+        name,
+        description,
+        status,
+        deadline,
+        completed,
+        userId,
+      });
+      dispatch(setTask(response.data.posts));
+      console.log(response.data.message);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+};
+
+export const getAllPosts = (userId: number) => {
+  return async (dispatch: Dispatch) => {
+    try {
+      const response = await axios.post("http://localhost:5000/api/posts/all", {
+        userId,
+      });
+      dispatch(getTasks());
+      console.log(response.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+};
+
+export const getOnePost = (taskId: number, userId: number) => {
+  return async (dispatch: Dispatch) => {
+    try {
+      const response = await axios.post("http://localhost:5000/api/posts/one", {
+        taskId,
+        userId,
+      });
+      dispatch(getTask(response.data.posts));
+      console.log(response.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+};
+
+export const updatePost = (
+  name: string,
+  description: string,
+  status: number,
+  deadline: Date,
+  completed: boolean,
+  taskId: number,
+  userId: number
+) => {
+  return async (dispatch: Dispatch) => {
+    try {
+      const response = await axios.post("http://localhost:5000/api/posts", {
+        name,
+        description,
+        status,
+        deadline,
+        completed,
+        taskId,
+        userId,
+      });
+      dispatch(updateTask(response.data.posts));
+      console.log(response.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+};
+
+export const deletePost = (taskId: number, userId: number) => {
+  return async (dispatch: Dispatch) => {
+    try {
+      const response = await axios.post("http://localhost:5000/api/posts/del", {
+        taskId,
+        userId,
+      });
+      dispatch(removeTask(response.data.posts));
+      console.log(response.data);
     } catch (e) {
       console.log(e);
     }

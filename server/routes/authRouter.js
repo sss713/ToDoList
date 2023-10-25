@@ -39,7 +39,7 @@ async (req, res) => {
     }
 })
 
-router.post('http://localhost:5000/api//authorization',
+router.post('http://localhost:5000/api/authorization',
 
 async (req, res) => {
 
@@ -74,7 +74,7 @@ async (req, res) => {
 
 })
 
-router.get('/auth', authMiddleware,
+router.get('http://localhost:5000/api//auth', authMiddleware,
     async (req, res) => {
         try {
         const {login} = req.body

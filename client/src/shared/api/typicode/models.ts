@@ -3,8 +3,8 @@ export type Task = {
   name: string;
   description: string;
   status: number;
-  dedline: Date;
-  comleted: boolean;
+  deadline: Date;
+  completed: boolean;
 };
 export type User = {
   user_id: number;
