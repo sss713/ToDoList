@@ -9,7 +9,6 @@ TDtask_completed boolean);
 create table users(user_id serial primary key,
 Login varchar(90),
 Password varchar(250),
-Login varchar(90),
 Telegramm_id integer,
 Nickname varchar(250));
 create table nd(ND_id serial,
