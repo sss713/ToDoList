@@ -18,7 +18,7 @@ Nickname varchar(20)
 
 create table tg_users(
 user_id serial primary key,
-Telegramm_id integer,
+telegram_id integer,
 foreign key (user_id) references users(user_id) on delete cascade
 );
 
