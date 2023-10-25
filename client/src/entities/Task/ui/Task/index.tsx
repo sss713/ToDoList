@@ -2,37 +2,27 @@ import { FC, useState } from "react";
 import styles from "./style.module.sass";
 import ToggleButton from "shared/ui/ToggleButton";
 import Text from "shared/ui/Text";
+import TaskCard from "../TaskCard";
 
 interface TaskProps {
-  id: number;
-  description: string;
   name: string;
-  status: number;
   dedline: Date;
   completed: Boolean;
-  isFull?: boolean;
 }
 
-const Task: FC<TaskProps> = ({
-  id,
-  name,
-  description,
-  status,
-  dedline,
-  completed,
-  isFull = false,
-}) => {
-  const [full, setFull] = useState(isFull);
+const Task: FC<TaskProps> = ({ name, dedline, completed }) => {
+  const [taskCard, setTaskCard] = useState(false);
   return (
-    <div key={id} className={[styles.task, completed].join(" ")}>
+    <div
+      className={[styles.task, completed].join(" ")}
+      onClick={() => setTaskCard(!taskCard)}
+    >
       <ToggleButton type={completed ? "_completed" : ""} />
-      <Text style={styles.name} onClick={() => setFull(!full)}>
-        {name}
-      </Text>
+      <Text style={styles.name}>{name}</Text>
       <Text type="text_small" style={styles.dedline}>
         {dedline.toLocaleDateString()}
       </Text>
-      {full && <Text style={styles.description}>{description}</Text>}
+      {taskCard && <TaskCard setHidden={() => setTaskCard(!taskCard)} />}
     </div>
   );
 };

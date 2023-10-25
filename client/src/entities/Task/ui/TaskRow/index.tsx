@@ -21,10 +21,7 @@ const TasksRow: FC<TasksRowProps> = ({ tasks }) => {
       {tasks?.map((t) => (
         <Task
           key={t.id}
-          id={t.id}
           name={t.name}
-          description={t.description}
-          status={t.status}
           dedline={t.dedline}
           completed={false}
         ></Task>

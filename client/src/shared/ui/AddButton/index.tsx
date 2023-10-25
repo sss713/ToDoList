@@ -7,7 +7,7 @@ interface ButtonProps {
   style?: string;
   disabled?: boolean;
   type?: "button" | "submit" | "reset" | undefined;
-  onClick?: any;
+  onClick?: () => void;
 }
 
 const Button: FC<ButtonProps> = ({
