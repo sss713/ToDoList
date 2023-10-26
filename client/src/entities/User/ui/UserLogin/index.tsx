@@ -25,7 +25,12 @@ const UserLoginForm: FC<UserLoginFormProps> = () => {
     reset,
   } = useForm<UserLoginFormData>({ mode: "onBlur" });
   const onSubmit = handleSubmit((data) => {
+    const { email, password, nickName } = data
     console.log(JSON.stringify(data));
+    console.log(isValid)
+    isValid && isRegistration
+    ? registration(email, password, nickName)
+    : dispatch(login(email, password));
     reset();
   });
   const [nickName, setNickName] = useState("");
@@ -33,6 +38,7 @@ const UserLoginForm: FC<UserLoginFormProps> = () => {
   const [password, setPassword] = useState("");
   const [isRegistration, setIsRegistration] = useState(true);
   const dispatch: any = useDispatch();
+
 
   return (
     <div className={styles.form__container}>

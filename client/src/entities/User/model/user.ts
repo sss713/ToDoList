@@ -7,8 +7,11 @@ export const registration = (
   password: string,
   nickname: string
 ) => {
+  console.log(login, password, nickname, "987987987987987")
   return async (dispatch: Dispatch) => {
+    console.log(login, password, nickname, "qwoieoqiwueoi")
     try {
+      console.log(login, password, nickname, "312312312312")
       const response = await axios.post(
         "http://localhost:5000/api/registration",
         {
@@ -60,3 +63,5 @@ export const auth = () => {
     }
   };
 };
+
+
