@@ -7,11 +7,15 @@ import { authMiddleware } from "../middleware/auth.middleware.js";
 
 const router = new Router();
 
-router.post('http://localhost:5000/api/registration',
+router.post('/registration',
 async (req, res) => {
     try {
 
         const {login, password, nickname} = req.body
+
+        if (login.length > 3 && login.length < 20){
+
+            if (password.length > 8 && password.length < 36){
 
                 const candidate = await db.query('SELECT login FROM users where login = $1', [login])
                 if (candidate.rows[0] && candidate.rows[0].login === login) {
@@ -19,8 +23,15 @@ async (req, res) => {
                 } else {
                     const hashPassword = await bcrypt.hash(password, 7)
                     const user = await db.query('INSERT INTO users (login, password, nickname) values ($1, $2, $3) RETURNING *', [login, hashPassword, nickname])
-                    return res.status(200).json({message: `Hi ${nickname}! Registration successful!`});
+                    return res.status(200).json({message: `Hi ${login}! Registration successful!`});
                 }
+
+            } else {
+                return res.status(400).json({message: "password must be longer than 8 and shorter than 36"})
+            }
+        } else {
+            return res.status(400).json({message: "login must be longer than 3 and shorter than 20"})
+        }
        
     } catch (e) {
         console.log(e);
@@ -28,7 +39,7 @@ async (req, res) => {
     }
 })
 
-router.post('http://localhost:5000/api/authorization',
+router.post('/authorization',
 
 async (req, res) => {
 
@@ -38,7 +49,11 @@ async (req, res) => {
         if (candidate.rows.length === 0 || candidate.rows[0].login !== login) {
             return res.status(400).json({message: "Invalid password or username"})
         } else {
-            
+            const isPassValid = bcrypt.compareSync(password, candidate.rows[0].password)
+
+            if (!isPassValid) {
+                return res.status(400).json({message: "Invalid password or username"})
+            } else {
                 const token = jwt.sign({id: candidate.rows[0].id}, config.get("authRouter.secretKey"), {expiresIn: "1h"})
                 return res.json({
                     token,
@@ -49,7 +64,7 @@ async (req, res) => {
                     }
                 })
             }
-        
+        }
 
     } catch (e) {
         console.log(e);
@@ -59,20 +74,22 @@ async (req, res) => {
 
 })
 
-router.get('http://localhost:5000/api/auth', authMiddleware,
+router.get('/auth', authMiddleware,
     async (req, res) => {
         try {
         const {login} = req.body
         const user = await db.query('SELECT id, login, nickname,cd password FROM users where login = $1', [login])
+        console.log(req.id)
         const token = jwt.sign({id: candidate.rows[0].id}, config.get("authRouter.secretKey"), {expiresIn: "1h"})
-        return res.json({
+        console.log(token)
+                return res.json({
                     token,
                     user: {
-                        id: user.id,
-                        login: user.login,
-                        nickname: user.nickname,
+                        id: candidate.rows[0].id,
+                        login: candidate.rows[0].login,
+                        nickname: candidate.rows[0].nickname,
                     }
-         })
+                })
     } catch (e) {
         console.log(e);
         return res.send({message:"Server error"})
