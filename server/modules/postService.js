@@ -5,11 +5,11 @@ class PostService {
     async create(post) {
         try {
             const { TDtask_name, TDtask_description, TDtask_status, TDtask_deadline, TDtask_completed, userId } = post.body
-            const isValid = await validator.array.forEach(TDtask_name, TDtask_description, TDtask_status, TDtask_deadline, TDtask_completed, userId => {
-                if (isValid != true) {
-                    return res.status(400).json({message: "Incorrect data!"})
-                }
-            });
+            
+            const requiredFields = [TDtask_name, TDtask_description, TDtask_status, TDtask_deadline, TDtask_completed, userId];
+            if (requiredFields.includes(undefined) || requiredFields.includes(null) || requiredFields.includes('')) {
+                return res.status(400).json({ message: "Incorrected data!" });
+            }
             const createdPost = await db.query('WITH inserted_task AS ( INSERT INTO ToDoTask (TDtask_name, TDtask_description, TDtask_status, TDtask_deadline, TDtask_completed) VALUES ($1, $2, $3, $4, $5) RETURNING *) INSERT INTO nd (TDtask_id, user_id) SELECT TDtask_id, $6 FROM inserted_task RETURNING *', [TDtask_name, TDtask_description, TDtask_status, TDtask_deadline, TDtask_completed, userId]);
             console.log(createdPost)
             return createdPost;
