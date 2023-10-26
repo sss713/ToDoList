@@ -1,4 +1,6 @@
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, Date, ForeignKey
+import datetime
+
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, Date, ForeignKey, Table, MetaData, insert
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -47,6 +49,51 @@ class Model():
         self.engine = create_engine('sqlite:///ToDoTasks.db')
         self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()
+        # self.metadata = MetaData()
 
     def create_table(self):
         Base.metadata.create_all(self.engine)
+
+    def init_table(self):
+        ToDoTask = Table('ToDoTask', self.metadata, autoload=True)
+        users = Table('users', self.metadata, autoload=True)
+        ND = Table('nd', self.metadata, autoload=True)
+
+    async def add_task_to_db(self, id_user, task_status, data: dict):
+        data['TDtask_completed'] = 0
+        data['TDtask_status'] = task_status
+        data['TDtask_deadline'] = datetime.datetime.strptime(data['TDtask_deadline'], '%Y-%m-%d')
+        try:
+            new_taskToDoTask = ToDoTask(
+                TDtask_name=data['TDtask_name'],
+                TDtask_description=data['TDtask_description'],
+                TDtask_status=data['TDtask_status'],
+                TDtask_deadline=data['TDtask_deadline'],
+                TDtask_completed=data['TDtask_completed']
+            )
+
+            self.session.add(new_taskToDoTask)
+            self.session.flush()
+
+            # Теперь можно получить id записи
+            new_task_id = new_taskToDoTask.TDtask_id
+            query = self.session.query(User.user_id).filter(User.telegram_id == id_user).first()
+            if query:
+                id_user_from_db = query[0]
+                new_taskND = ND(
+                    TDtask_id=new_task_id,
+                    user_id=id_user_from_db
+                )
+                self.session.add(new_taskND)
+                self.session.commit()
+                return True
+            else:
+                self.session.rollback()
+                return False
+        except Exception as err:
+            print(err)
+            return False
+
+
+
+
