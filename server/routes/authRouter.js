@@ -108,6 +108,34 @@ async (req, res) => {
 
 })
 
+router.post('/tgalerts',
+
+async (req, res) => {
+
+    try {
+        const {telegram_id, enable_alerts} = req.body
+        const candidate = await db.query('SELECT telegram_id, enable_alerts FROM tg_users where telegram_id = $1', [telegram_id])
+        if (candidate.rows.length === 0) {
+            return res.status(400).json({message: "Invalid password or username"})
+        } else {
+            const user = await db.query('UPDATE tg_users SET enable_alerts = $1 WHERE telegram_id = $2 RETURNING *;', [enable_alerts, telegram_id])
+                return res.json({
+                    user: {
+                        id: user.rows[0].telegram_id,
+                        enable_alerts: user.rows[0].enable_alerts,
+                    }
+                })
+            }
+        }
+
+    catch (e) {
+        console.log(e);
+        return res.send({message:"Server error"})
+    }
+    
+
+})
+
 // router.get('/auth', authMiddleware,
 //     async (req, res) => {
 //         try {
