@@ -1,34 +1,41 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import styles from "./style.module.sass";
 import Label from "shared/ui/Label";
 import AddButton from "shared/ui/AddButton";
 import Close from "shared/ui/Close";
+import { createPost, updatePost } from "entities/Task/model/tasks";
+import { useSelector } from "react-redux";
 
 type TaskData = {
   taskName: string;
   description: string;
   status: number;
-  dedline: Date;
+  deadline: Date;
 };
 
 interface TaskCardProps {
-  editing?: boolean;
+  isEditing?: boolean;
   setHidden: () => void;
   name?: string;
   description?: string;
-  dedline?: Date;
+  deadline?: Date;
   status?: number;
+  completed?: boolean;
+  taskId: number;
 }
 
 const TaskCard: FC<TaskCardProps> = ({
-  editing = false,
+  isEditing = true,
   setHidden,
   name: taskName = "",
   description: taskDescription = "",
-  dedline: taskDedline = new Date(),
+  deadline: taskDeadline = new Date(),
   status: taskStatus = 1,
+  completed = false,
+  taskId,
 }) => {
+  const userId = useSelector((state: any) => state.user.id);
   const {
     register,
     formState: { errors, isValid },
@@ -37,25 +44,34 @@ const TaskCard: FC<TaskCardProps> = ({
   } = useForm<TaskData>({ mode: "onBlur" });
   const onSubmit = handleSubmit((data) => {
     console.log(JSON.stringify(data));
+    isEditing
+      ? updatePost(
+          name,
+          description,
+          status,
+          deadline,
+          completed,
+          taskId,
+          userId
+        )
+      : createPost(name, description, status, deadline, completed, userId);
     reset();
   });
-  const [isEditing, setEditing] = useState(editing);
   const [name, setName] = useState(taskName);
   const [description, setDescription] = useState(taskDescription);
-  const [dedline, setDedline] = useState(taskDedline);
+  const [deadline, setDedline] = useState(taskDeadline);
   const [status, setStatus] = useState(taskStatus);
 
   return (
     <div className={styles.form__container}>
       <Close onClick={setHidden} />
-      <form onSubmit={onSubmit} className={styles.form}>
+      <form onSubmit={() => onSubmit} className={styles.form}>
         <Label
           errorHidden={Boolean(errors?.taskName)}
           errorMessage={errors?.taskName?.message}
           style={styles.taskName}
         >
           <input
-            disabled={!isEditing}
             placeholder="Название"
             type="text"
             value={name}
@@ -78,20 +94,19 @@ const TaskCard: FC<TaskCardProps> = ({
           />
         </Label>
         <Label
-          errorHidden={Boolean(errors?.dedline)}
-          errorMessage={errors?.dedline?.message}
+          errorHidden={Boolean(errors?.deadline)}
+          errorMessage={errors?.deadline?.message}
           style={styles.dedline}
         >
           <input
-            disabled={!isEditing}
             placeholder="Дедлайн"
             type="datetime-local"
-            value={dedline.toISOString().substring(0, 16)}
+            value={deadline.toISOString().substring(0, 16)}
             className={[
               styles.input,
-              errors?.dedline && styles.input_error,
+              errors?.deadline && styles.input_error,
             ].join(" ")}
-            {...register("dedline", {
+            {...register("deadline", {
               required: "Поле обязательно",
             })}
             onChange={(e) => {
@@ -109,7 +124,6 @@ const TaskCard: FC<TaskCardProps> = ({
           style={styles.status}
         >
           <input
-            disabled={!isEditing}
             placeholder="Важность"
             type="number"
             value={status}
@@ -139,7 +153,6 @@ const TaskCard: FC<TaskCardProps> = ({
           style={styles.description}
         >
           <textarea
-            disabled={!isEditing}
             placeholder="Описание"
             value={description}
             className={[
@@ -160,26 +173,15 @@ const TaskCard: FC<TaskCardProps> = ({
             onChange={(e) => setDescription(e.target.value)}
           />
         </Label>
-        {isEditing ? (
-          <AddButton
-            type="submit"
-            style={styles.button}
-            disabled={!isValid}
-            onClick={setHidden}
-          >
-            +
-          </AddButton>
-        ) : (
-          <AddButton
-            type="button"
-            style={styles.button}
-            onClick={() => {
-              setEditing(!isEditing);
-            }}
-          >
-            ✎
-          </AddButton>
-        )}
+
+        <AddButton
+          type="submit"
+          style={styles.button}
+          disabled={!isValid}
+          onClick={setHidden}
+        >
+          {isEditing ? "✎" : "+"}
+        </AddButton>
       </form>
     </div>
   );

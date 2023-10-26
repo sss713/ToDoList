@@ -10,11 +10,17 @@ const defaultState = {
 export default function tasksReducer(state = defaultState, action: any) {
   switch (action.type) {
     case SET_TASK:
-      return { ...state, posts: action.payload.posts };
+      return {
+        ...state,
+        posts: action.payload.posts,
+      };
     case GET_TASKS:
       return { ...state };
     case GET_TASK:
-      return { ...state, posts: action.payload.posts };
+      return {
+        ...state,
+        posts: action.payload.posts,
+      };
     case UPDATE_TASK:
       return {
         ...state,

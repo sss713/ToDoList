@@ -7,7 +7,6 @@ import {
 } from "./../../../shared/api/reducers/tasksReducer";
 import axios from "axios";
 import { Dispatch } from "redux";
-const TasksRouter = require("../../../../../server/routes/postRouter");
 
 export const createPost = (
   name: string,

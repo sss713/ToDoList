@@ -5,25 +5,47 @@ import Text from "shared/ui/Text";
 import TaskCard from "../TaskCard";
 
 interface TaskProps {
-  name: string;
-  dedline: Date;
-  completed: Boolean;
+  name?: string;
+  description?: string;
+  deadline?: Date;
+  status?: number;
+  completed?: boolean;
+  taskId: number;
 }
 
-const Task: FC<TaskProps> = ({ name, dedline, completed }) => {
+const Task: FC<TaskProps> = ({
+  name,
+  description,
+  deadline,
+  status,
+  completed,
+  taskId,
+}) => {
   const [taskCard, setTaskCard] = useState(false);
   return (
-    <div
-      className={[styles.task, completed].join(" ")}
-      onClick={() => setTaskCard(!taskCard)}
-    >
-      <ToggleButton type={completed ? "_completed" : ""} />
-      <Text style={styles.name}>{name}</Text>
-      <Text type="text_small" style={styles.dedline}>
-        {dedline.toLocaleDateString()}
-      </Text>
-      {taskCard && <TaskCard setHidden={() => setTaskCard(!taskCard)} />}
-    </div>
+    <>
+      <div
+        className={[styles.task, completed].join(" ")}
+        onClick={() => setTaskCard(!taskCard)}
+      >
+        <ToggleButton type={completed ? "_completed" : ""} />
+        <Text style={styles.name}>{name}</Text>
+        <Text type="text_small" style={styles.dedline}>
+          {deadline?.toLocaleDateString()}
+        </Text>
+      </div>
+      {taskCard && (
+        <TaskCard
+          setHidden={() => setTaskCard(!taskCard)}
+          taskId={taskId}
+          name={name}
+          description={description}
+          deadline={deadline}
+          status={status}
+          completed={completed}
+        />
+      )}
+    </>
   );
 };
 

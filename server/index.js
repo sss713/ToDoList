@@ -14,7 +14,7 @@ app.use('/api', authRouter, postRouter);
 
 const start = () => {
     try {
-        app.listen(PORT, () => {
+        app.listen(5000, () => {
             console.log("Server running on port: ", PORT);
         })
     } catch (e) {

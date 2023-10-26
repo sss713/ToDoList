@@ -12,19 +12,22 @@ interface TaskProps {
 }
 
 interface TasksRowProps {
-  tasks: TaskProps[] | undefined;
+  tasks: Array<TaskProps> | [];
 }
 
 const TasksRow: FC<TasksRowProps> = ({ tasks }) => {
   return (
     <div className={styles.task__container}>
-      {tasks?.map((t) => (
+      {tasks?.map((t: TaskProps) => (
         <Task
           key={t.id}
+          taskId={t.id}
           name={t.name}
-          dedline={t.dedline}
-          completed={false}
-        ></Task>
+          deadline={t.dedline}
+          completed={t.comleted}
+          description={t.description}
+          status={t.status}
+        />
       ))}
     </div>
   );
