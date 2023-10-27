@@ -1,9 +1,15 @@
 from aiogram.fsm.state import StatesGroup, State
 
 class StateStatus(StatesGroup):
+    start_place = State()
+
+    get_login_reg = State()
+    get_password_reg = State()
+    get_nickname_reg = State()
 
     get_login = State()
     get_password = State()
+
     after_auth = State()
     befor_auth = State()
 

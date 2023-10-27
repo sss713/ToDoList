@@ -51,3 +51,7 @@ class Api_query:
         data["TDtask_completed"] = False
         data["userId"] = id_user
         return await Api_query.request_1_POST('posts', data)
+
+    @staticmethod
+    async def reg_POST(data):
+        return await Api_query.request_1_POST('registration', data)

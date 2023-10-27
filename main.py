@@ -66,12 +66,71 @@ async def background_task(chat_id, state, data):
 
 
 @dp.message(CommandStart())
-async def start(message: Message):
+async def start(message: Message, state: FSMContext):
     await message.answer('Этот бот создан для просмотра ваших задач и уведомления! \n '
-                         'Чтобы войти вы должны быть зарегистрированы на сайте - https://savitto.ru/ \n'
-                         'После регистрации на сайте пишите /login\n')
+                         'Чтобы войти вы должны быть зарегистрированы через бота, либо на сайте - https://savitto.ru/ \n'
+                         'После регистрации пишите /login\n'
+                         'Чтобы перейти на регистрацию пишите /reg\n')
+    await state.set_state(StateStatus.start_place)
 
-@dp.message(Command("login"))
+
+@dp.message(Command("reg"), StateStatus.start_place)
+async def start_reg(message: Message, state: FSMContext):
+    await message.answer(
+        f'{message.from_user.full_name}, Придумайте логин(Логин должен быть в промежутке от 2 до 19 символов): ')
+    await state.set_state(StateStatus.get_login_reg)
+
+@dp.message(StateStatus.get_login_reg)
+async def get_login_reg(message: Message, state: FSMContext):
+    login_reg = message.text
+    if 2 <= len(login_reg) <= 19:
+        await message.answer('Введите пароль (Пароль должен быть в промежутке от 7 до 35 символов):')
+        await state.update_data(login=login_reg)
+        await state.set_state(StateStatus.get_password_reg)
+    else:
+        await message.answer('Ваш логин слишком длинный или слишком короткий')
+        await message.answer(f'{message.from_user.full_name}, введите логин: ')
+        await state.set_state(StateStatus.get_login_reg)
+
+@dp.message(StateStatus.get_password_reg)
+async def get_password_reg(message: Message, state: FSMContext):
+    password_reg = message.text
+    if 7 <= len(password_reg) <= 35:
+        data = await state.get_data()
+        await state.update_data(password=password_reg)
+        await message.answer('Введите никнейм:')
+        await state.set_state(StateStatus.get_nickname_reg)
+    else:
+        await message.answer(
+            f'Пароль должен быть в промежутке от 8 до 36 символов\nТекущая длина пароля {len(password_reg)}')
+        await state.set_state(StateStatus.get_password_reg)
+
+@dp.message(StateStatus.get_nickname_reg)
+async def get_nickname_reg(message: Message, state: FSMContext):
+    nickname_reg = message.text
+    data = await state.get_data()
+    if 1 <= len(nickname_reg) <= 19:
+        data["nickname"] = nickname_reg
+        response = await Api_query.reg_POST(data)
+        response = json.loads(response)
+        if "message" in response:
+            if response["message"] != 'Server error':
+                if response["message"] != f'User with login: {data["login"]} already exist':
+                    await message.answer(f'Регистрация успешена, {nickname_reg}!')
+                    id_user = await Api_query.get_id_user(data)
+                    id_user = json.loads(id_user)
+                    await state.update_data(db_id_user=id_user["user"]["id"])
+                    await start(message, state)
+                else:
+                    await message.answer('Ошибка регистрации, возможно вы уже создали такой аккаунт')
+                    await start(message, state)
+            else:
+                await message.answer('Ошибка регистрации, возможно вы уже создали такой аккаунт')
+                await start(message, state)
+        else:
+            await message.answer('Ошибка попробуйте другой вариант регистрации или зайдите позже')
+            await start(message, state)
+@dp.message(Command("login"), StateStatus.start_place)
 async def start_to_login(message: Message, state: FSMContext):
     await message.answer(f'{message.from_user.full_name}, введите логин(Логин должен быть в промежутке от 2 до 19 символов): ')
     await state.set_state(StateStatus.get_login)
@@ -245,6 +304,8 @@ async def add_task_status_func(message: Message, state: FSMContext):
     if 0 <= int(task_status) <= 10:
         response = await Api_query.add_task_POST(data, data["db_id_user"])
         await message.answer("Успешно добавлена новая задача!")
+        await state.set_state(StateStatus.profile)
+        await menu(message, state)
     else:
         await state.set_state(StateStatus.add_task_status)
         await message.answer('Ошибка много взяли')
