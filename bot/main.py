@@ -12,7 +12,6 @@ from settings.config import dp, TOKEN
 from utils import StateGP
 from utils.API import Api_query
 from utils.StateGP import StateStatus
-from utils.model import Model, User, ToDoTask, ND
 from aiogram.fsm.context import FSMContext
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove, CallbackQuery
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
