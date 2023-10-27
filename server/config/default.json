@@ -4,10 +4,10 @@
     },
     "db":{
         "user": "postgres",
-        "password": "admin",
+        "password": "ToDoList",
         "host": "localhost",
         "port": 5432,
-        "database": "todolist"
+        "database": "ToDoList"
     },
     "authRouter":{
         "secretKey": "ToDoList-Is-The-Best!"
