@@ -47,19 +47,44 @@ function ToDo() {
     setTasks(tasks);
   }, [tasks]);
   const [isCreatingTask, setCreatingTask] = useState(false);
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+  const [isEditing, setEditing] = useState(true);
+  const date: TaskProps = {
+    id: 1,
+    name: "asdas",
+    description: "asdsaasd",
+    status: 1,
+    dedline: new Date(),
+    comleted: true,
+  };
+  return (
+    <div className={styles.taskRow}>
+      <UserLogout />
+      <TasksRow tasks={[date]} />
+=======
+
+>>>>>>> temp
   const isAuth = useSelector((state: any) => state.user.isAuth);
   return (
     <div className={styles.taskRow}>
       {!isAuth ? <UserLogout text="Обратно" /> : <UserLogout />}
       <TasksRow tasks={tasks} />
+>>>>>>> temp
       <TelegrammButton
         onClick={() => (window.location.href = "https://t.me/ToDo_teambot")}
       />
       {isCreatingTask ? (
         <TaskCard
           setHidden={() => setCreatingTask(!isCreatingTask)}
+<<<<<<< HEAD
           isEditing={false}
           taskId={-1}
+=======
+          isEditing={isEditing}
+          setEditing={() => setEditing(!isEditing)}
+>>>>>>> temp
         />
       ) : (
         <AddButton

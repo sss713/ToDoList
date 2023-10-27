@@ -27,6 +27,11 @@ const TasksRow: FC<TasksRowProps> = ({ tasks }) => {
           completed={t.completed}
           description={t.description}
           status={t.status}
+<<<<<<< HEAD
+=======
+          dedline={t.dedline}
+          completed={t.comleted}
+>>>>>>> temp
         />
       ))}
     </div>

@@ -15,6 +15,7 @@ type TaskData = {
 };
 
 interface TaskCardProps {
+<<<<<<< HEAD
   isEditing?: boolean;
   setHidden: () => void;
   name?: string;
@@ -37,6 +38,34 @@ const TaskCard: FC<TaskCardProps> = ({
 }) => {
   const userId = useSelector((state: any) => state.user.id);
   const dispatch: any = useDispatch();
+=======
+<<<<<<< HEAD
+  isEditing?: boolean;
+  setEditing?: () => void;
+=======
+  editing?: boolean;
+>>>>>>> temp
+  setHidden: () => void;
+  taskName?: string;
+  description?: string;
+  importance?: number;
+  dedline?: Date;
+}
+
+<<<<<<< HEAD
+const TaskCard: FC<TaskCardProps> = ({
+  isEditing,
+  setEditing,
+  setHidden,
+  taskName: task = "",
+  description: desc = "",
+  importance: imp = 0,
+  dedline: ded = new Date(),
+}) => {
+=======
+const TaskCard: FC<TaskCardProps> = ({ editing = false, setHidden }) => {
+>>>>>>> temp
+>>>>>>> temp
   const {
     register,
     formState: { errors, isValid },
@@ -62,10 +91,17 @@ const TaskCard: FC<TaskCardProps> = ({
         );
     reset();
   });
+<<<<<<< HEAD
   const [name, setName] = useState(taskName);
   const [description, setDescription] = useState(taskDescription);
   const [deadline, setDedline] = useState(taskDeadline);
   const [status, setStatus] = useState(taskStatus);
+=======
+  const [taskName, setTaskName] = useState(task);
+  const [description, setDescription] = useState(desc);
+  // const [importance, setImportance] = useState(imp);
+  const [dedline, setDedline] = useState(ded);
+>>>>>>> temp
 
   return (
     <div className={styles.form__container}>
@@ -178,6 +214,7 @@ const TaskCard: FC<TaskCardProps> = ({
             onChange={(e) => setDescription(e.target.value)}
           />
         </Label>
+<<<<<<< HEAD
 
         <AddButton
           type="submit"
@@ -187,6 +224,26 @@ const TaskCard: FC<TaskCardProps> = ({
         >
           {isEditing ? "✎" : "+"}
         </AddButton>
+=======
+        {isEditing ? (
+          <AddButton
+            type="submit"
+            style={styles.button}
+            disabled={!isValid}
+            onClick={setHidden}
+          >
+            +
+          </AddButton>
+        ) : (
+          <AddButton
+            type="button"
+            style={styles.button}
+            onClick={() => setEditing}
+          >
+            ✎
+          </AddButton>
+        )}
+>>>>>>> temp
       </form>
     </div>
   );
