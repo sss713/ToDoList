@@ -5,7 +5,7 @@ import Label from "shared/ui/Label";
 import AddButton from "shared/ui/AddButton";
 import Close from "shared/ui/Close";
 import { createPost, updatePost } from "entities/Task/model/tasks";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 type TaskData = {
   taskName: string;
@@ -36,6 +36,7 @@ const TaskCard: FC<TaskCardProps> = ({
   taskId,
 }) => {
   const userId = useSelector((state: any) => state.user.id);
+  const dispatch: any = useDispatch();
   const {
     register,
     formState: { errors, isValid },
@@ -45,16 +46,20 @@ const TaskCard: FC<TaskCardProps> = ({
   const onSubmit = handleSubmit((data) => {
     console.log(JSON.stringify(data));
     isEditing
-      ? updatePost(
-          name,
-          description,
-          status,
-          deadline,
-          completed,
-          taskId,
-          userId
+      ? dispatch(
+          updatePost(
+            name,
+            description,
+            status,
+            deadline,
+            completed,
+            taskId,
+            userId
+          )
         )
-      : createPost(name, description, status, deadline, completed, userId);
+      : dispatch(
+          createPost(name, description, status, deadline, completed, userId)
+        );
     reset();
   });
   const [name, setName] = useState(taskName);
