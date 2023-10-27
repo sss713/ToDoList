@@ -8,7 +8,7 @@ interface TaskProps {
   description: string;
   status: number;
   dedline: Date;
-  comleted: boolean;
+  completed: boolean;
 }
 
 interface TasksRowProps {
@@ -24,7 +24,7 @@ const TasksRow: FC<TasksRowProps> = ({ tasks }) => {
           taskId={t.id}
           name={t.name}
           deadline={t.dedline}
-          completed={t.comleted}
+          completed={t.completed}
           description={t.description}
           status={t.status}
         />

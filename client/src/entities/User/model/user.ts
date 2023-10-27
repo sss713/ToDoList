@@ -1,5 +1,4 @@
 import axios from "axios";
-import { Dispatch } from "redux";
 import { setUser } from "shared/api/reducers/userReducer";
 
 export const registration = (
@@ -7,11 +6,9 @@ export const registration = (
   password: string,
   nickname: string
 ) => {
-  console.log(login, password, nickname, "987987987987987")
-  return async (dispatch: Dispatch) => {
-    console.log(login, password, nickname, "qwoieoqiwueoi")
+  return async (dispatch: any) => {
+    console.log(2);
     try {
-      console.log(login, password, nickname, "312312312312")
       const response = await axios.post(
         "http://localhost:5000/api/registration",
         {
@@ -30,7 +27,7 @@ export const registration = (
 };
 
 export const login = (login: string, password: string) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: any) => {
     try {
       const response = await axios.post(
         "http://localhost:5000/api/authorization",
@@ -49,7 +46,7 @@ export const login = (login: string, password: string) => {
 };
 
 export const auth = () => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: any) => {
     try {
       const response = await axios.get("http://localhost:5000/api/auth", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -59,9 +56,6 @@ export const auth = () => {
       console.log(response.data);
     } catch (e) {
       console.log(e);
-      localStorage.removeItem("token");
     }
   };
 };
-
-

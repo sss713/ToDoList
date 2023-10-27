@@ -14,7 +14,7 @@ interface TaskProps {
   description: string;
   status: number;
   dedline: Date;
-  comleted: boolean;
+  completed: boolean;
 }
 
 function ToDo() {
@@ -22,10 +22,30 @@ function ToDo() {
   const dispatch: any = useDispatch();
   console.log(useSelector((state: any) => state.user));
   console.log(dispatch(getAllPosts(userId)) || []);
-
-  const [tasks, setTasks] = useState<Array<TaskProps>>(
-    dispatch(getAllPosts(userId)) || []
+  const [tasks, setTasks] = useState<[] | TaskProps[]>(
+    Array.of(dispatch(getAllPosts(userId))) || []
+    // [
+    //   {
+    //     id: 1,
+    //     name: "task1",
+    //     description: "task1Description",
+    //     status: 2,
+    //     dedline: new Date(),
+    //     completed: false,
+    //   },
+    //   {
+    //     id: 2,
+    //     name: "task2",
+    //     description: "task2Description",
+    //     status: 1,
+    //     dedline: new Date(),
+    //     completed: true,
+    //   },
+    // ] || []
   );
+  useEffect(() => {
+    setTasks(tasks);
+  }, [tasks]);
   const [isCreatingTask, setCreatingTask] = useState(false);
   const isAuth = useSelector((state: any) => state.user.isAuth);
   return (
